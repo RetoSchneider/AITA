@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { ObservationLog } from "./observations.ts";
-import { reviewVerdict } from "./verdict.ts";
+import { reviewVerdict, verdictSchema } from "./verdict.ts";
 import type { VerdictInput } from "./verdict.ts";
 
 const bugReport = {
@@ -60,7 +60,7 @@ describe("reviewVerdict", () => {
     );
 
     expect(review.problems).toEqual([
-      "Evidence 2 does not appear in O1. Copy the quote exactly from that observation.",
+      "Evidence 2 is not a verifiable quote from O1. Copy the quote exactly from a text observation.",
     ]);
     expect(review.verdict.evidence.map((item) => item.verified)).toEqual([
       true,
@@ -93,5 +93,17 @@ describe("reviewVerdict", () => {
     );
 
     expect(review.verdict.bugReport).toBeNull();
+  });
+
+  it.each([
+    { summary: "   " },
+    { recommendation: "" },
+    { bugReport: { ...bugReport, steps: [] } },
+    { bugReport: { ...bugReport, expected: "  " } },
+    {
+      evidence: [{ observation: "O1", quote: "Received: 201", relevance: "" }],
+    },
+  ])("rejects blank verdict content: %j", (overrides) => {
+    expect(verdictSchema.safeParse(verdict(overrides)).success).toBe(false);
   });
 });

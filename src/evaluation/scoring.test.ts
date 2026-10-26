@@ -99,4 +99,25 @@ describe("renderScorecard", () => {
       "| Case b | Flaky test | ✓ Flaky test, ✗ Environment issue | 1 of 2 | 3, 3 |",
     );
   });
+
+  it("keeps case titles inside one literal table cell", () => {
+    const cases = [
+      {
+        ...run("escaped-title", "product-defect", "product-defect"),
+        title: "Broken | <img src=x>\n[link](https://example.com)",
+      },
+    ];
+    const markdown = renderScorecard(score(cases), cases, {
+      model: "model",
+      effort: "high",
+      repository: "repository",
+      revision: "abc1234",
+      date: "2026-10-26",
+    });
+
+    expect(markdown).toContain(
+      "| Broken \\| &lt;img src=x&gt; \\[link\\]\\(https://example.com\\) | Product defect |",
+    );
+    expect(markdown).not.toContain("<img");
+  });
 });

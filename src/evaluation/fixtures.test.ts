@@ -148,4 +148,119 @@ describe("FixtureFactory", () => {
     ).toBe(true);
     await fixture.dispose();
   });
+
+  it("removes the worktree when a fault cannot be applied", async () => {
+    const [testCase] = await loadCases(path.join(workDirectory, "cases"), [
+      "limit-regression",
+    ]);
+    if (testCase === undefined) throw new Error("case missing");
+    const cacheDirectory = path.join(workDirectory, "cleanup-cache");
+    const factory = new FixtureFactory({
+      source: source.root,
+      revision,
+      cacheDirectory,
+    });
+    const initial = await factory.create(testCase);
+    await initial.dispose();
+    const mirror = path.join(cacheDirectory, "repository");
+    const before = await git(mirror, ["worktree", "list", "--porcelain"]);
+
+    await expect(
+      factory.create({
+        ...testCase,
+        patch: path.join(workDirectory, "missing.patch"),
+      }),
+    ).rejects.toThrow("git apply failed");
+
+    expect(await git(mirror, ["worktree", "list", "--porcelain"])).toBe(before);
+    const recovered = await factory.create(testCase);
+    await recovered.dispose();
+  });
+
+  it("rejects a cache created for a different source", async () => {
+    const [testCase] = await loadCases(path.join(workDirectory, "cases"), [
+      "database-down",
+    ]);
+    if (testCase === undefined) throw new Error("case missing");
+    const cacheDirectory = path.join(workDirectory, "source-cache");
+    const fixture = await new FixtureFactory({
+      source: source.root,
+      revision,
+      cacheDirectory,
+    }).create(testCase);
+    await fixture.dispose();
+    const other = await temporaryRepository();
+    try {
+      const factory = new FixtureFactory({
+        source: other.root,
+        revision,
+        cacheDirectory,
+      });
+
+      await expect(factory.create(testCase)).rejects.toThrow(
+        "cache belongs to another repository",
+      );
+    } finally {
+      await other.remove();
+    }
+  });
+
+  it("resolves a named revision to the immutable baseline commit", async () => {
+    const [testCase] = await loadCases(path.join(workDirectory, "cases"), [
+      "limit-regression",
+    ]);
+    if (testCase === undefined) throw new Error("case missing");
+    const factory = new FixtureFactory({
+      source: source.root,
+      revision: "main",
+      cacheDirectory: path.join(workDirectory, "named-revision-cache"),
+    });
+    const fixture = await factory.create(testCase);
+    try {
+      expect(fixture.baseline).toBe(revision);
+    } finally {
+      await fixture.dispose();
+    }
+  });
+
+  it("uses the fetched commit when a named revision is missing from the cache", async () => {
+    const [testCase] = await loadCases(path.join(workDirectory, "cases"), [
+      "database-down",
+    ]);
+    if (testCase === undefined) throw new Error("case missing");
+    const cacheDirectory = path.join(workDirectory, "fetch-cache");
+    const initial = await new FixtureFactory({
+      source: source.root,
+      revision,
+      cacheDirectory,
+    }).create(testCase);
+    await initial.dispose();
+    await git(source.root, [
+      "checkout",
+      "--quiet",
+      "-b",
+      "new-evaluation-case",
+    ]);
+    try {
+      const nextRevision = await source.commit(
+        { "new-case.txt": "new revision" },
+        "Add case",
+      );
+      const fixture = await new FixtureFactory({
+        source: source.root,
+        revision: "new-evaluation-case",
+        cacheDirectory,
+      }).create(testCase);
+      try {
+        expect(fixture.baseline).toBe(nextRevision);
+        expect(
+          await readFile(path.join(fixture.root, "new-case.txt"), "utf8"),
+        ).toBe("new revision");
+      } finally {
+        await fixture.dispose();
+      }
+    } finally {
+      await git(source.root, ["checkout", "--quiet", "main"]);
+    }
+  });
 });

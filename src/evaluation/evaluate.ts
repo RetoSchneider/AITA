@@ -59,9 +59,15 @@ export async function evaluateCases(
 }
 
 async function failureOf(testCase: EvaluationCase): Promise<Failure> {
-  const [failure] = await readFailures(testCase.report);
+  const failures = await readFailures(testCase.report);
+  const [failure] = failures;
   if (failure === undefined) {
     throw new Error(`The report of case ${testCase.id} contains no failure`);
+  }
+  if (failures.length !== 1) {
+    throw new Error(
+      `The report of case ${testCase.id} must contain exactly one failure; found ${failures.length}`,
+    );
   }
   return failure;
 }

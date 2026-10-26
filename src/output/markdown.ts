@@ -3,6 +3,7 @@ import type { Failure } from "../domain/failure.ts";
 import type { BugReport, Cause, Evidence, Triage } from "../domain/triage.ts";
 import { plural } from "../shared/text.ts";
 import type { TriageEntry, TriageRun } from "../triage-run.ts";
+import { codeSpan, escapeCell, escapeHtml, escapeText } from "./escaping.ts";
 import {
   causeLabels,
   formatCost,
@@ -21,7 +22,7 @@ export function renderRun(run: TriageRun): string {
     ...(run.skipped.length > 0
       ? [
           "",
-          `${plural(run.skipped.length, "more failure")} not triaged: ${run.skipped.map(locate).join(", ")}`,
+          `${plural(run.skipped.length, "more failure")} not triaged: ${run.skipped.map((failure) => escapeText(locate(failure))).join(", ")}`,
         ]
       : []),
     "",
@@ -55,15 +56,15 @@ function overview(entries: TriageEntry[]): string[] {
 
 function section({ failure, triage }: TriageEntry): string[] {
   return [
-    `### ${causeLabels[triage.cause]}: ${failure.title}`,
+    `### ${causeLabels[triage.cause]}: ${escapeCell(failure.title)}`,
     "",
-    `\`${locate(failure)}\` · ${scope(failure)} · ${triage.confidence} confidence`,
+    `${codeSpan(locate(failure))} · ${escapeText(scope(failure))} · ${triage.confidence} confidence`,
     "",
-    triage.summary,
+    escapeText(triage.summary),
     ...evidence(triage.evidence),
     ...(triage.bugReport === null ? [] : bugReport(triage.bugReport)),
     "",
-    `**Next step:** ${triage.recommendation}`,
+    `**Next step:** ${escapeText(triage.recommendation)}`,
   ];
 }
 
@@ -74,8 +75,8 @@ function evidence(items: Evidence[]): string[] {
     "**Evidence**",
     "",
     ...items.flatMap((item) => [
-      `- ${item.relevance}${item.verified ? "" : " _(quote not found in the cited observation)_"}`,
-      ...item.quote.split("\n").map((line) => `  > ${line}`),
+      `- ${escapeText(item.relevance)}${item.verified ? "" : " _(quote not found in the cited observation)_"}`,
+      ...item.quote.split(/\r?\n/).map((line) => `  > ${escapeText(line)}`),
     ]),
   ];
 }
@@ -83,13 +84,13 @@ function evidence(items: Evidence[]): string[] {
 function bugReport(report: BugReport): string[] {
   return [
     "",
-    `**Bug report: ${report.title}** (${report.severity})`,
+    `**Bug report: ${escapeCell(report.title)}** (${report.severity})`,
     "",
-    ...report.steps.map((step, index) => `${index + 1}. ${step}`),
+    ...report.steps.map((step, index) => `${index + 1}. ${escapeCell(step)}`),
     "",
-    `- **Expected:** ${report.expected}`,
-    `- **Actual:** ${report.actual}`,
-    `- **Suspected cause:** ${report.suspectedCause}`,
+    `- **Expected:** ${escapeText(report.expected)}`,
+    `- **Actual:** ${escapeText(report.actual)}`,
+    `- **Suspected cause:** ${escapeText(report.suspectedCause)}`,
   ];
 }
 
@@ -103,7 +104,7 @@ function footer(model: string, triages: Triage[]): string {
     (total, triage) => total + triage.durationMs,
     0,
   );
-  return `<sub>${model} · ${plural(toolCalls, "tool call")} · ${formatTokens(usage)} · ${formatCost(usage.costUsd)} · ${formatDuration(duration)} agent time</sub>`;
+  return `<sub>${escapeHtml(model)} · ${plural(toolCalls, "tool call")} · ${formatTokens(usage)} · ${formatCost(usage.costUsd)} · ${formatDuration(duration)} agent time</sub>`;
 }
 
 function locate(failure: Failure): string {
@@ -123,8 +124,4 @@ function scope(failure: Failure): string {
       ? [`passed on retry in ${failure.flakyIn.join(", ")}`]
       : [];
   return [...failed, ...flaky].join(", ");
-}
-
-function escapeCell(value: string): string {
-  return value.replaceAll("|", "\\|");
 }

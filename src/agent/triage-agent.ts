@@ -61,7 +61,11 @@ export class TriageAgent {
 }
 
 type Review =
-  { accepted: true; verdict: Verdict } | { accepted: false; feedback: string };
+  | { accepted: true; verdict: Verdict }
+  | { accepted: false; feedback: string; exhausted: boolean };
+
+type TurnOutcome =
+  { termination: "verdict"; verdict: Verdict } | { termination: "no-verdict" };
 
 type ToolOutcome = { call: BetaToolUseBlock } & (
   { succeeded: true; output: ToolOutput } | { succeeded: false; error: string }
@@ -112,7 +116,7 @@ class Investigation {
   async run(): Promise<Triage> {
     const report = this.#observations.record(
       "Failure report",
-      describeFailure(this.#failure),
+      clip(describeFailure(this.#failure), this.#limits.maxObservationLength),
     );
     this.#messages.push({ role: "user", content: [text(render(report))] });
     let reminded = false;
@@ -143,17 +147,25 @@ class Investigation {
         continue;
       }
 
-      const verdict = await this.#answer(calls);
-      if (verdict !== undefined) return this.#conclude("verdict", verdict);
+      const outcome = await this.#answer(calls);
+      if (outcome?.termination === "verdict") {
+        return this.#conclude("verdict", outcome.verdict);
+      }
+      if (outcome?.termination === "no-verdict") {
+        return this.#giveUp("no-verdict");
+      }
     }
     return this.#giveUp("limit-reached");
   }
 
-  async #answer(calls: BetaToolUseBlock[]): Promise<Verdict | undefined> {
+  async #answer(calls: BetaToolUseBlock[]): Promise<TurnOutcome | undefined> {
     const results: BetaToolResultBlockParam[] = [];
     for (const call of calls.filter((call) => call.name === verdictTool.name)) {
       const review = this.#review(call);
-      if (review.accepted) return review.verdict;
+      if (review.accepted) {
+        return { termination: "verdict", verdict: review.verdict };
+      }
+      if (review.exhausted) return { termination: "no-verdict" };
       results.push(failed(call.id, review.feedback));
     }
     const actions = calls.filter((call) => call.name !== verdictTool.name);
@@ -175,24 +187,28 @@ class Investigation {
   #review(call: BetaToolUseBlock): Review {
     const parsed = verdictSchema.safeParse(call.input);
     if (!parsed.success) return this.#reject(z.prettifyError(parsed.error));
-    const { verdict, problems } = reviewVerdict(
+    const { verdict, problems, complete } = reviewVerdict(
       parsed.data,
       this.#observations,
     );
     const exhausted =
       this.#rejectedVerdicts >= this.#limits.maxRejectedVerdicts;
-    if (problems.length === 0 || exhausted) return { accepted: true, verdict };
+    if (problems.length === 0 || (exhausted && complete)) {
+      return { accepted: true, verdict };
+    }
     return this.#reject(problems.join("\n"));
   }
 
   #reject(feedback: string): Review {
+    const exhausted =
+      this.#rejectedVerdicts >= this.#limits.maxRejectedVerdicts;
     this.#rejectedVerdicts += 1;
     this.#steps.push({
       action: verdictTool.name,
       observation: null,
       error: feedback,
     });
-    return { accepted: false, feedback };
+    return { accepted: false, feedback, exhausted };
   }
 
   async #run(call: BetaToolUseBlock): Promise<ToolOutcome> {
@@ -235,6 +251,7 @@ class Investigation {
       output.kind === "text"
         ? clip(output.text, this.#limits.maxObservationLength)
         : `Image ${output.mediaType}, shown below. Images cannot be quoted as evidence.`,
+      output.kind,
     );
     this.#steps.push({
       action: output.label,

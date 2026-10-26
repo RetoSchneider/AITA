@@ -104,4 +104,54 @@ describe("renderRun", () => {
       renderRun({ model: "claude-opus-5-5", entries: [], skipped: [] }),
     ).toContain("No failed or flaky tests.");
   });
+
+  it("renders quoted HTML and Markdown literally instead of interpreting evidence", () => {
+    const markdown = renderRun({
+      model: "model<img src='remote'>",
+      entries: [
+        {
+          failure: aFailure({ title: "Pay | now\n# hidden heading" }),
+          triage: aTriage({
+            summary: "The <button> is missing.",
+            evidence: [
+              {
+                observation: "O2",
+                quote:
+                  "<button>Pay & confirm</button>\n![image](https://example.com)",
+                relevance: "The missing **button**.",
+                verified: true,
+              },
+            ],
+          }),
+        },
+      ],
+      skipped: [],
+    });
+
+    expect(markdown).toContain("| Pay \\| now \\# hidden heading |");
+    expect(markdown).toContain("The &lt;button&gt; is missing.");
+    expect(markdown).toContain("The missing \\*\\*button\\*\\*.");
+    expect(markdown).toContain(
+      "  > &lt;button&gt;Pay &amp; confirm&lt;/button&gt;",
+    );
+    expect(markdown).not.toContain("![image]");
+    expect(markdown).not.toContain("<img");
+  });
+
+  it("keeps backticks in source filenames inside a single code span", () => {
+    const markdown = renderRun({
+      model: "model",
+      entries: [
+        {
+          failure: aFailure({
+            location: { file: "tests/`checkout`.spec.ts", line: 4, column: 1 },
+          }),
+          triage: aTriage(),
+        },
+      ],
+      skipped: [],
+    });
+
+    expect(markdown).toContain("`` tests/`checkout`.spec.ts:4 ``");
+  });
 });

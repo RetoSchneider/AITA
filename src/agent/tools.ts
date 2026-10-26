@@ -165,6 +165,11 @@ const rerunTestTool = defineTool({
     if (failure.kind === "setup") {
       throw new ToolInputError("Only test failures can be rerun.");
     }
+    if (![...failure.failedIn, ...failure.flakyIn].includes(project)) {
+      throw new ToolInputError(
+        `The test did not fail in project ${project}. Choose a project listed as failed or passed on retry.`,
+      );
+    }
     const runs = Math.min(Math.max(1, times), maxReruns);
     const outcome = await workspace.runner.rerun(failure, project, runs);
     return {

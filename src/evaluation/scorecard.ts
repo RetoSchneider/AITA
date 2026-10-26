@@ -1,4 +1,5 @@
 import { causes } from "../domain/triage.ts";
+import { codeSpan, escapeCell, escapeText } from "../output/escaping.ts";
 import {
   causeLabels,
   formatCost,
@@ -25,9 +26,9 @@ export function renderScorecard(
   const repetitions =
     scorecard.cases === 0 ? 0 : scorecard.runs / scorecard.cases;
   return [
-    `# Evaluation: ${context.model}, ${context.effort} effort`,
+    `# Evaluation: ${escapeCell(context.model)}, ${escapeCell(context.effort)} effort`,
     "",
-    `${scorecard.cases} cases × ${repetitions} ${repetitions === 1 ? "run" : "runs"} against ${context.repository} at \`${context.revision.slice(0, 7)}\` on ${context.date}.`,
+    `${scorecard.cases} cases × ${repetitions} ${repetitions === 1 ? "run" : "runs"} against ${escapeText(context.repository)} at ${codeSpan(context.revision.slice(0, 7))} on ${escapeCell(context.date)}.`,
     "",
     "| Metric | Result |",
     "| --- | --- |",
@@ -86,7 +87,7 @@ function caseRows(runs: CaseRun[]): string[] {
     const evidence = ofCase.flatMap((run) => run.triage.evidence);
     const verified = evidence.filter((item) => item.verified).length;
     const toolCalls = ofCase.map((run) => run.triage.toolCalls).join(", ");
-    return `| ${first.title} | ${causeLabels[first.expected]} | ${verdicts} | ${verified} of ${evidence.length} | ${toolCalls} |`;
+    return `| ${escapeCell(first.title)} | ${causeLabels[first.expected]} | ${verdicts} | ${verified} of ${evidence.length} | ${toolCalls} |`;
   });
 }
 

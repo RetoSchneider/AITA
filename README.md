@@ -4,7 +4,7 @@
 
 AITA (AI Test Agent) is an agent that finds out why Playwright tests failed. For every failed or flaky test in a report, it reads the test, the page state at the moment of failure and the changes since the last green run. It then decides whether the failure is a **product defect**, an **outdated test**, a **flaky test** or an **environment issue**, and drafts a bug report for real defects.
 
-Every verdict quotes the evidence it rests on, and each quote is checked against what the agent actually saw before the verdict is accepted. An evaluation suite measures the agent on 13 failures with a known cause, injected into a real application. In the latest run it named the correct cause in all 39 runs, at an average of $0.06 and 17 seconds per failure.
+A classification cites the observations it rests on, and each quote is checked against the text the agent received. An evaluation suite covers 13 failures with a known cause, injected into a real application. The latest evaluation classified all 39 investigations correctly, at an estimated average of $0.06 and 18 seconds per investigation. These are repeated classifications of fixed cases; they do not estimate accuracy on unseen failures.
 
 ## How it works
 
@@ -23,13 +23,15 @@ flowchart LR
 
 The agent loop is written directly against the Claude Messages API ([triage-agent.ts](src/agent/triage-agent.ts)). Design decisions:
 
-- **Read-only tools.** The agent reads files, searches the code, inspects the diff since the baseline, opens attachments such as the page snapshot or screenshot and, when allowed, reruns the test ([tools.ts](src/agent/tools.ts)). It cannot change code or tests, so it can never make a real defect disappear by "fixing" the test.
-- **Checked evidence.** Every tool result is recorded as a numbered observation. A verdict must quote the observations it relies on. A quote that does not appear in the cited observation goes back to the model with a precise correction, and if it is still wrong after two corrections it is marked as unverified in the output ([verdict.ts](src/agent/verdict.ts), [observations.ts](src/agent/observations.ts)).
-- **Repository content is data.** File contents, test output, attachments and commit messages are passed to the model as data, and the instructions forbid following instructions found in them ([instructions.ts](src/agent/instructions.ts)).
-- **Bounded cost.** A tool budget, a turn limit, size limits on observations and prompt caching keep every triage predictable. Each result reports tool calls, tokens, cost and duration.
+- **Inspection by default.** The agent reads files, searches tracked code, inspects baseline diffs and opens attachments. It has no code-editing tool. Opt-in reruns execute the project's Playwright tests and can change files, databases or other state ([tools.ts](src/agent/tools.ts), [runner.ts](src/playwright/runner.ts)).
+- **Checked quotations.** Every tool result is recorded as a numbered observation. Quotes are matched after whitespace normalization and removal of displayed line numbers. Unmatched quotes receive up to two corrections, then remain visibly unverified. Missing evidence or an incomplete bug report instead produces an inconclusive result when the repair budget is exhausted. This checks quotation provenance; it does not prove the diagnosis or the relevance of the quote ([verdict.ts](src/agent/verdict.ts), [observations.ts](src/agent/observations.ts)).
+- **Repository content is data.** The system instructions distinguish repository content from instructions for the agent. This reduces prompt-injection risk but is not a security boundary ([instructions.ts](src/agent/instructions.ts)).
+- **Bounded investigation.** Tool and turn limits, clipped observations and prompt caching constrain work. They do not impose a hard spending cap. Each result reports tool calls, tokens, estimated cost and duration; cost is unknown when rates for the serving model are unavailable.
 - **Honest uncertainty.** `inconclusive` is a valid verdict. The evaluation reports how often the agent commits to a cause and how often it is right when it does.
 - **Strict schemas.** Tool inputs and the verdict are Zod schemas, sent to the API as strict JSON schemas and validated again when the model's answer arrives ([schema.ts](src/agent/schema.ts)).
-- **Sandboxed access.** Paths are resolved against the repository or artifact directory and rejected if they leave it, and git runs without a shell ([paths.ts](src/workspace/paths.ts), [repository.ts](src/workspace/repository.ts)).
+- **Path boundaries.** File reads resolve symlinks and reject paths outside the repository or artifact directory. Git runs without a shell, and diffs disable external diff and text-conversion programs. These checks are not an operating-system sandbox ([paths.ts](src/workspace/paths.ts), [repository.ts](src/workspace/repository.ts)).
+
+The CLI composes the model gateway, repository, artifact store and optional test runner. Each investigation owns its conversation, observations and budget, so concurrent investigations do not share model state. Live reruns are serialized within a command and write to temporary artifact directories. If a batch fails, it stops starting new investigations and waits for active work and cleanup before reporting the error. The implementation uses the SDK directly; an agent framework or service layer would add little to this command-line scope.
 
 ## Output
 
@@ -59,33 +61,35 @@ The evaluation measures the agent on failures whose cause is known. Each case br
 
 Some cases are deliberately hard to tell apart. The declined-payment defect and the renamed button break the same UI test. Most product defects come with plausible commit messages that make the change look intended. The colliding random seats produce an error message that reads like a race condition in the application.
 
-Each case holds the fault as a git patch with its commit message, the Playwright report and attachments recorded against SeatWise's production build and PostgreSQL database, and, for test failures, the results of rerunning the test. For every run, the agent gets a fresh checkout of the pinned revision with the fault committed on top, so it sees the same code, history and artifacts as in a real CI run ([fixtures.ts](src/evaluation/fixtures.ts)).
+Each case holds the fault as a git patch with its commit message, the Playwright report and attachments recorded against SeatWise's production build and PostgreSQL database, and, for test failures, recorded rerun outcomes. Evaluation creates one temporary checkout per case at the pinned revision, commits the fault on top, and reuses that checkout across repetitions. Each repetition starts a fresh model conversation. The expected category and fault description stay outside that conversation ([fixtures.ts](src/evaluation/fixtures.ts), [evaluate.ts](src/evaluation/evaluate.ts)).
 
 ### Results
 
-The latest run used Claude Opus 5.5 at high effort, with three runs per case ([full scorecard](eval/results/2026-10-26-claude-opus-5-5-high.md)):
+The latest evaluation ran after the code review fixes on October 26, 2026, using Claude Opus 5.5 at high effort with three investigations per case ([full scorecard](eval/results/2026-10-26-claude-opus-5-5-high-11c6160e-5b0b-42ea-b348-a1936d13580e.md), [full results](eval/results/2026-10-26-claude-opus-5-5-high-11c6160e-5b0b-42ea-b348-a1936d13580e.json)):
 
 | Metric                     | Result                           |
 | -------------------------- | -------------------------------- |
-| Correct cause              | 39 of 39 runs                    |
+| Correct category           | 39 of 39 runs                    |
 | Answered, not inconclusive | 39 of 39 runs                    |
 | Same cause in every run    | 13 of 13 cases                   |
-| Evidence quotes verified   | 186 of 186                       |
-| Tool calls per triage      | 4.9 on average                   |
-| Time per triage            | 17 s on average                  |
-| Cost                       | $2.23 in total, $0.06 per triage |
+| Evidence quotes verified   | 190 of 190                       |
+| Tool calls per triage      | 5.1 on average                   |
+| Time per triage            | 18 s on average                  |
+| Estimated cost             | $2.33 in total, $0.06 per triage |
 
 The scorecard also breaks the result down by cause, with a confusion matrix across all causes, and lists the verdicts of every case. The first run found one real problem: the model wrote search patterns in Perl syntax, which the search tool rejected at the time. The tool now accepts Perl-compatible expressions, and the run above uses that version.
+
+The suite is a development benchmark from one application, not a held-out test set. Repetitions measure consistency over the same code and recorded evidence; they do not rerun the application. Scoring compares categories and checks quotation matches. It does not independently grade explanations, bug-report severity or recommended fixes. Broader claims would need unseen repositories, more failure types and human assessment of the reports.
 
 ```bash
 pnpm evaluate --repeat 3
 ```
 
-Scorecards and the full runs, including every investigation step, are written to `eval/results`. `pnpm record <case-id>` records a case again; it needs Docker and a local SeatWise checkout next to this repository.
+Scorecards and results, including tool-action records and verdicts, are written to `eval/results` with unique filenames so later runs preserve earlier results. `pnpm record <case-id>` records a case again; it needs Docker and a local SeatWise checkout next to this repository.
 
 ## Usage
 
-You need Node.js 22.14 or newer, pnpm 10.18.3 and an [Anthropic API key](https://console.anthropic.com/).
+You need Git with Perl-compatible regular-expression support, Node.js 22.14 or newer, pnpm 10.18.3 and an [Anthropic API key](https://console.anthropic.com/).
 
 ```bash
 pnpm install --frozen-lockfile
@@ -108,7 +112,7 @@ pnpm triage --report ../my-app/test-results/results.json --repository ../my-app 
 | `--max-tool-calls <n>`  | Tool calls per failure (default: 16)                                      |
 | `--concurrency <n>`     | Failures investigated in parallel (default: 2)                            |
 
-The project under test needs Playwright's JSON reporter, for example `["json", { outputFile: "test-results/results.json" }]` in `playwright.config.ts`. For diffs against the baseline, the checkout needs the full history.
+The project under test needs Playwright's JSON reporter, for example `["json", { outputFile: "test-results/results.json" }]` in `playwright.config.ts`. For diffs against the baseline, the checkout needs the full history. Report excerpts, requested source files and attachments are sent to the configured Anthropic endpoint. Use `--rerun` only with a trusted checkout and a suitable test environment: it selects a file and source line, so Playwright may also execute tests generated at that same line and project dependencies. Only results matching the requested test's file, line, title and project contribute to the reported counts.
 
 ### In GitHub Actions
 
@@ -116,7 +120,6 @@ The project under test needs Playwright's JSON reporter, for example `["json", {
 - uses: actions/checkout@v7
   with:
     fetch-depth: 0
-# install, build and run the Playwright tests
 - uses: actions/checkout@v7
   if: failure() && github.event_name == 'pull_request'
   with:
@@ -127,31 +130,33 @@ The project under test needs Playwright's JSON reporter, for example `["json", {
   env:
     ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
     GH_TOKEN: ${{ github.token }}
+    BASELINE: origin/${{ github.base_ref }}
+    PR_NUMBER: ${{ github.event.pull_request.number }}
   run: |
     pnpm --dir .aita install --frozen-lockfile
     pnpm --dir .aita build
     node .aita/dist/main.js triage \
       --report test-results/results.json \
-      --baseline origin/${{ github.base_ref }} \
+      --baseline "$BASELINE" \
       --output triage.md
-    gh pr comment ${{ github.event.pull_request.number }} --body-file triage.md
+    gh pr comment "$PR_NUMBER" --body-file triage.md
 ```
 
-When `GITHUB_STEP_SUMMARY` is set, the summary is also added to the job summary. Commenting needs `pull-requests: write` permission.
+Add these steps around the existing application install, build and Playwright test steps. When `GITHUB_STEP_SUMMARY` is set, the summary is also added to the job summary. Commenting needs `pull-requests: write` permission. The API key must be available to the job; GitHub does not normally expose repository secrets to pull requests from forks.
 
 ## Project structure
 
-| Path                                             | Content                                                         |
-| ------------------------------------------------ | --------------------------------------------------------------- |
-| [src/agent](src/agent)                           | Agent loop, tools, instructions, verdict check, usage and cost  |
-| [src/playwright](src/playwright)                 | Reading Playwright JSON reports and rerunning tests             |
-| [src/workspace](src/workspace)                   | Sandboxed access to the repository, git history and attachments |
-| [src/evaluation](src/evaluation)                 | Evaluation cases, checkouts with the injected fault, scoring    |
-| [src/output](src/output)                         | Markdown summary                                                |
-| [src/commands](src/commands)                     | `triage` and `evaluate` commands                                |
-| [scripts/record-case.ts](scripts/record-case.ts) | Recording an evaluation case against SeatWise                   |
-| [eval](eval)                                     | Pinned SeatWise revision, cases and scorecards                  |
-| [docs](docs)                                     | Example output from the evaluation                              |
+| Path                                             | Content                                                        |
+| ------------------------------------------------ | -------------------------------------------------------------- |
+| [src/agent](src/agent)                           | Agent loop, tools, instructions, verdict check, usage and cost |
+| [src/playwright](src/playwright)                 | Reading Playwright JSON reports and rerunning tests            |
+| [src/workspace](src/workspace)                   | Repository, git history, attachments and file-path boundaries  |
+| [src/evaluation](src/evaluation)                 | Evaluation cases, checkouts with the injected fault, scoring   |
+| [src/output](src/output)                         | Markdown summary                                               |
+| [src/commands](src/commands)                     | `triage` and `evaluate` commands                               |
+| [scripts/record-case.ts](scripts/record-case.ts) | Recording an evaluation case against SeatWise                  |
+| [eval](eval)                                     | Pinned SeatWise revision, cases and scorecards                 |
+| [docs](docs)                                     | Example output from the evaluation                             |
 
 ## Development
 
@@ -160,7 +165,7 @@ pnpm check
 pnpm build
 ```
 
-`pnpm check` runs Prettier, ESLint with the strict type-checked rules of typescript-eslint, the TypeScript compiler and the Vitest suite. The unit tests drive the agent loop with a scripted model, so they need neither an API key nor network access. CI runs the same checks on every push and pull request.
+`pnpm check` runs Prettier, ESLint with the strict type-checked rules of typescript-eslint, the TypeScript compiler and the Vitest suite. Tests drive the agent loop with a scripted model and exercise Git, filesystem and subprocess boundaries in temporary directories. They need neither an API key nor network access. CI runs the same checks on pushes to `master` and on pull requests.
 
 ## License
 

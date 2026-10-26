@@ -20,6 +20,7 @@ import { Repository } from "../workspace/repository.ts";
 import type { Workspace } from "../workspace/workspace.ts";
 import { budgetNotice, verdictReminder } from "./instructions.ts";
 import { TriageAgent } from "./triage-agent.ts";
+import type { VerdictInput } from "./verdict.ts";
 
 let fixture: TemporaryRepository;
 let workspace: Workspace;
@@ -50,7 +51,11 @@ afterAll(async () => {
 const readCheckout = () =>
   toolCall("read_file", { path: "src/checkout.ts", startLine: 1, endLine: 5 });
 
-function submit(quote: string, observation = "O2") {
+function submit(
+  quote: string,
+  observation = "O2",
+  overrides: Partial<VerdictInput> = {},
+) {
   return toolCall("submit_triage", {
     cause: "product-defect",
     confidence: "high",
@@ -67,6 +72,7 @@ function submit(quote: string, observation = "O2") {
       suspectedCause:
         "src/checkout.ts returns the existing order unconditionally.",
     },
+    ...overrides,
   });
 }
 
@@ -132,6 +138,24 @@ describe("TriageAgent", () => {
     );
   });
 
+  it("limits the initial observation and cannot verify text hidden by that limit", async () => {
+    const gateway = new ScriptedGateway([
+      reply([submit("Received: 201", "O1")]),
+    ]);
+
+    const triage = await new TriageAgent(gateway, {
+      maxObservationLength: 100,
+      maxRejectedVerdicts: 0,
+    }).triage(aFailure({ title: "A long title ".repeat(100) }), workspace);
+
+    const firstMessage = gateway.requests[0]?.messages[0];
+    expect(JSON.stringify(firstMessage?.content)).toContain("more characters");
+    expect(JSON.stringify(firstMessage?.content)).not.toContain(
+      "Received: 201",
+    );
+    expect(triage.evidence[0]?.verified).toBe(false);
+  });
+
   it("returns a quote that is not in the cited observation to the model", async () => {
     const gateway = new ScriptedGateway([
       reply([readCheckout()]),
@@ -145,7 +169,7 @@ describe("TriageAgent", () => {
     const [rejection] = toolResults(gateway.requests[2]?.messages ?? []);
     expect(rejection?.is_error).toBe(true);
     expect(textOf(rejection)).toBe(
-      "Evidence 1 does not appear in O2. Copy the quote exactly from that observation.",
+      "Evidence 1 is not a verifiable quote from O2. Copy the quote exactly from a text observation.",
     );
     expect(triage.steps.at(-1)).toMatchObject({ action: "submit_triage" });
   });
@@ -164,6 +188,43 @@ describe("TriageAgent", () => {
       termination: "verdict",
       evidence: [{ quote: "still invented", verified: false }],
     });
+  });
+
+  it.each([{ evidence: [] }, { bugReport: null }])(
+    "does not accept an incomplete verdict after the repair budget: %j",
+    async (overrides) => {
+      const gateway = new ScriptedGateway([
+        reply([submit("Received: 201", "O1", overrides)]),
+        reply([submit("Received: 201", "O1", overrides)]),
+      ]);
+
+      const triage = await new TriageAgent(gateway, {
+        maxRejectedVerdicts: 1,
+      }).triage(aFailure(), workspace);
+
+      expect(triage).toMatchObject({
+        cause: "inconclusive",
+        confidence: "low",
+        termination: "no-verdict",
+        bugReport: null,
+      });
+      expect(triage.steps).toHaveLength(2);
+      expect(gateway.requests).toHaveLength(2);
+    },
+  );
+
+  it("stops malformed submissions when the repair budget is exhausted", async () => {
+    const gateway = new ScriptedGateway([
+      reply([toolCall("submit_triage", {})]),
+      reply([toolCall("submit_triage", {})]),
+    ]);
+
+    const triage = await new TriageAgent(gateway, {
+      maxRejectedVerdicts: 1,
+    }).triage(aFailure(), workspace);
+
+    expect(triage.termination).toBe("no-verdict");
+    expect(gateway.requests).toHaveLength(2);
   });
 
   it("announces the exhausted tool budget once and refuses further tool calls", async () => {
@@ -303,5 +364,21 @@ describe("TriageAgent", () => {
     expect(
       textOf(toolResults(gateway.requests[1]?.messages ?? [])[0]),
     ).toContain("rerun_test api ×5\nRan 3 times in api: 1 passed, 2 failed.");
+  });
+
+  it("does not rerun a project that did not fail in the report", async () => {
+    const runner: TestRunner = {
+      rerun: () => Promise.reject(new Error("The runner must not be called")),
+    };
+    const gateway = new ScriptedGateway([
+      reply([toolCall("rerun_test", { project: "*", times: 1 })]),
+      reply([submit("Received: 201", "O1")]),
+    ]);
+
+    await new TriageAgent(gateway).triage(aFailure(), { ...workspace, runner });
+
+    const [result] = toolResults(gateway.requests[1]?.messages ?? []);
+    expect(result?.is_error).toBe(true);
+    expect(textOf(result)).toContain("The test did not fail in project *.");
   });
 });

@@ -1,13 +1,13 @@
 import { execFile } from "node:child_process";
-import { randomUUID } from "node:crypto";
-import { rm } from "node:fs/promises";
+import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
 
 import type { Failure } from "../domain/failure.ts";
-import { messageOf } from "../shared/text.ts";
+import { messageOf, toPosix } from "../shared/text.ts";
 import { countResults, readReport } from "./report.ts";
+import type { PlaywrightReport } from "./report.ts";
 
 const execFileAsync = promisify(execFile);
 
@@ -30,18 +30,33 @@ export interface TestRunner {
 export class PlaywrightRunner implements TestRunner {
   readonly #root: string;
   readonly #timeoutMs: number;
+  #pending: Promise<void> = Promise.resolve();
 
   constructor(root: string, timeoutMs = 20 * 60 * 1000) {
-    this.#root = root;
+    this.#root = path.resolve(root);
     this.#timeoutMs = timeoutMs;
   }
 
-  async rerun(
+  rerun(
     failure: Failure,
     project: string,
     times: number,
   ): Promise<RerunOutcome> {
-    const output = path.join(tmpdir(), `aita-${randomUUID()}.json`);
+    const next = this.#pending.then(() => this.#run(failure, project, times));
+    this.#pending = next.then(
+      () => undefined,
+      () => undefined,
+    );
+    return next;
+  }
+
+  async #run(
+    failure: Failure,
+    project: string,
+    times: number,
+  ): Promise<RerunOutcome> {
+    const directory = await mkdtemp(path.join(tmpdir(), "aita-rerun-"));
+    const output = path.join(directory, "report.json");
     const cli = path.join(
       this.#root,
       "node_modules",
@@ -55,7 +70,7 @@ export class PlaywrightRunner implements TestRunner {
         [
           cli,
           "test",
-          `${failure.location.file}:${failure.location.line}`,
+          `${testFilePattern(this.#root, failure.location.file)}:${failure.location.line}`,
           "--project",
           project,
           "--repeat-each",
@@ -64,10 +79,12 @@ export class PlaywrightRunner implements TestRunner {
           "0",
           "--reporter",
           "json",
+          "--output",
+          path.join(directory, "test-results"),
         ],
         {
           cwd: this.#root,
-          env: { ...process.env, PLAYWRIGHT_JSON_OUTPUT_NAME: output },
+          env: { ...process.env, PLAYWRIGHT_JSON_OUTPUT_FILE: output },
           timeout: this.#timeoutMs,
           maxBuffer: 64 * 1024 * 1024,
         },
@@ -75,15 +92,43 @@ export class PlaywrightRunner implements TestRunner {
         () => undefined,
         (error: unknown) => error,
       );
+      if (exit instanceof Error && "code" in exit && exit.code !== 1) {
+        throw new Error(`Playwright could not complete: ${messageOf(exit)}`);
+      }
       const report = await readReport(output).catch(() => {
         throw new Error(
           `Playwright produced no report: ${exit === undefined ? "no output" : messageOf(exit)}`,
         );
       });
-      const counts = countResults(report);
-      return { project, runs: counts.passed + counts.failed, ...counts };
+      return rerunOutcome(report, failure, project);
     } finally {
-      await rm(output, { force: true });
+      await rm(directory, { recursive: true, force: true });
     }
   }
+}
+
+export function rerunOutcome(
+  report: PlaywrightReport,
+  failure: Failure,
+  project: string,
+): RerunOutcome {
+  const counts = countResults(report, {
+    ...failure.location,
+    title: failure.title,
+    project,
+  });
+  if (counts.passed + counts.failed === 0) {
+    counts.errors = [
+      ...new Set([...counts.errors, ...countResults(report).errors]),
+      "The selected test did not complete any runs.",
+    ];
+  }
+  return { project, runs: counts.passed + counts.failed, ...counts };
+}
+
+export function testFilePattern(root: string, file: string): string {
+  return `^${toPosix(path.resolve(root, file))
+    .split("/")
+    .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`))
+    .join(String.raw`[\\/]`)}$`;
 }

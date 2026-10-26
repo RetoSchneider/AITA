@@ -1,0 +1,3403 @@
+[
+  {
+    "caseId": "browsers-not-installed",
+    "title": "Browsers not installed",
+    "expected": "environment-issue",
+    "repetition": 1,
+    "triage": {
+      "failureId": "tests/ui/discovery.spec.ts:3 sign-out clears the session and returns to the public home page",
+      "cause": "environment-issue",
+      "confidence": "high",
+      "summary": "The test never ran. Playwright could not launch Chromium because the headless shell executable is missing from the configured browsers path. Both attempts failed after 0.0 s. No commits or files changed since the baseline, so the code under test did not cause this.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "browserType.launch: Executable doesn't exist at .missing-browsers/chromium_headless_shell-1243/chrome-headless-shell-win64/chrome-headless-shell.exe",
+          "relevance": "The browser binary is missing, so the test failed at launch, before any application code ran.",
+          "verified": true
+        },
+        {
+          "observation": "O1",
+          "quote": "chromium, attempt 1: failed after 0.0 s",
+          "relevance": "The instant failure fits a setup error, not a failed assertion.",
+          "verified": true
+        },
+        {
+          "observation": "O2",
+          "quote": "Changed files:\nnone",
+          "relevance": "Nothing changed since the passing baseline, which rules out a product or test change.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Fix the CI or runner setup. Run `npx playwright install chromium` (or `npx playwright install --with-deps`) on the runner, and check that PLAYWRIGHT_BROWSERS_PATH points to a valid, populated directory. It currently resolves to `.missing-browsers`. Then rerun the test. Don't change the test or the application code.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "list_changes",
+          "observation": "O2",
+          "error": null
+        }
+      ],
+      "toolCalls": 1,
+      "usage": {
+        "inputTokens": 6,
+        "outputTokens": 682,
+        "cacheReadTokens": 2829,
+        "cacheWriteTokens": 2983,
+        "costUsd": 0.0291448
+      },
+      "durationMs": 8935
+    }
+  },
+  {
+    "caseId": "browsers-not-installed",
+    "title": "Browsers not installed",
+    "expected": "environment-issue",
+    "repetition": 2,
+    "triage": {
+      "failureId": "tests/ui/discovery.spec.ts:3 sign-out clears the session and returns to the public home page",
+      "cause": "environment-issue",
+      "confidence": "high",
+      "summary": "The test never ran. Both chromium attempts failed after 0.0 s in browserType.launch because the Chromium headless shell executable is missing from .missing-browsers/chromium_headless_shell-1243/. No commits or files changed since the baseline, so the cause is the test machine's browser installation, not the application or the test.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "browserType.launch: Executable doesn't exist at .missing-browsers/chromium_headless_shell-1243/chrome-headless-shell-win64/chrome-headless-shell.exe",
+          "relevance": "Playwright could not start the browser, so no test step ran.",
+          "verified": true
+        },
+        {
+          "observation": "O1",
+          "quote": "chromium, attempt 1: failed after 0.0 s",
+          "relevance": "The failure happened right away at launch, before any interaction with the app.",
+          "verified": true
+        },
+        {
+          "observation": "O2",
+          "quote": "Commits since f9313a6f879d5602105c25bac6540c4d756a8670:\nnone",
+          "relevance": "The code is the same as the baseline where the test passed, so the change is in the environment.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Install the Playwright browsers on the CI or test machine with `npx playwright install chromium`, or add that step to the pipeline. Also check that the browsers path (PLAYWRIGHT_BROWSERS_PATH, which currently points at `.missing-browsers`) is set correctly and that any browser cache is restored. Then rerun the test. Nothing needs to change in the app or the test.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "list_changes",
+          "observation": "O2",
+          "error": null
+        }
+      ],
+      "toolCalls": 1,
+      "usage": {
+        "inputTokens": 6,
+        "outputTokens": 755,
+        "cacheReadTokens": 5658,
+        "cacheWriteTokens": 172,
+        "costUsd": 0.017115599999999998
+      },
+      "durationMs": 9116
+    }
+  },
+  {
+    "caseId": "browsers-not-installed",
+    "title": "Browsers not installed",
+    "expected": "environment-issue",
+    "repetition": 3,
+    "triage": {
+      "failureId": "tests/ui/discovery.spec.ts:3 sign-out clears the session and returns to the public home page",
+      "cause": "environment-issue",
+      "confidence": "high",
+      "summary": "The test never ran. Playwright couldn't launch Chromium because the headless shell executable isn't installed at the configured browsers path (.missing-browsers/chromium_headless_shell-1243). Both attempts failed after 0.0 s, and nothing changed since the baseline, so the cause is the runner's browser installation, not the application or the test.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "browserType.launch: Executable doesn't exist at .missing-browsers/chromium_headless_shell-1243/chrome-headless-shell-win64/chrome-headless-shell.exe",
+          "relevance": "The browser binary is missing, so the test failed before it opened any page.",
+          "verified": true
+        },
+        {
+          "observation": "O1",
+          "quote": "chromium, attempt 1: failed after 0.0 s",
+          "relevance": "The failure was instant, before any test step ran, which fits a launch failure rather than an app or test problem.",
+          "verified": true
+        },
+        {
+          "observation": "O2",
+          "quote": "Commits since f9313a6f879d5602105c25bac6540c4d756a8670:\nnone",
+          "relevance": "No code changed since the baseline, so neither the product nor the test caused the failure.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Install the browsers on the CI or Windows runner with `npx playwright install chromium` (or `npx playwright install --with-deps`). Also check that PLAYWRIGHT_BROWSERS_PATH, which points to `.missing-browsers` here, matches where the browsers are installed or cached, and that the cached build (1243) matches the installed Playwright version. Then rerun the test. It never ran, so this result tells you nothing about the sign-out feature.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "list_changes",
+          "observation": "O2",
+          "error": null
+        }
+      ],
+      "toolCalls": 1,
+      "usage": {
+        "inputTokens": 6,
+        "outputTokens": 788,
+        "cacheReadTokens": 5658,
+        "cacheWriteTokens": 160,
+        "costUsd": 0.0177156
+      },
+      "durationMs": 12227
+    }
+  },
+  {
+    "caseId": "cancelled-event-can-be-republished",
+    "title": "Cancelled event can be published again",
+    "expected": "product-defect",
+    "repetition": 1,
+    "triage": {
+      "failureId": "tests/api/organizer.spec.ts:4 organizers can create, publish, unpublish, and cancel an event",
+      "cause": "product-defect",
+      "confidence": "high",
+      "summary": "The organizer status endpoint now lets an organizer publish an event after it was cancelled: it returns 200 where the test expects 409. Commit ba606a6 removed the CANCELLED guard from setEventStatus. Its only reason is that the dashboard hides cancelled events, which does nothing to stop direct API calls. Other code still treats a cancelled event as final: editing a cancelled event and admin moderation of one both still return a conflict.",
+      "evidence": [
+        {
+          "observation": "O4",
+          "quote": "-  if (event.status === \"CANCELLED\")\n-    throw conflict(\"CONFLICT\", \"A cancelled event cannot change status\");",
+          "relevance": "This is the only change since the baseline. It removes the check that rejected status changes on cancelled events, so the call now returns 200 instead of 409.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "Only the owning organizer can change an event's status, and the dashboard hides cancelled events.",
+          "relevance": "The commit's reason is about the UI and who owns the event. It does not say cancelled events should be publishable again, and hiding buttons does not protect the API.",
+          "verified": true
+        },
+        {
+          "observation": "O9",
+          "quote": "if (event.status === \"CANCELLED\") {\n    throw conflict(\"CONFLICT\", \"A cancelled event cannot change status\");",
+          "relevance": "Admin moderation still treats a cancelled event as final, so the two code paths now disagree.",
+          "verified": true
+        },
+        {
+          "observation": "O8",
+          "quote": "throw conflict(\"CONFLICT\", \"A cancelled event cannot be edited\");",
+          "relevance": "The event update path in the same service still blocks changes to cancelled events.",
+          "verified": true
+        },
+        {
+          "observation": "O6",
+          "quote": "cancelledAt: action === \"CANCEL\" ? clock.now() : null,",
+          "relevance": "If a cancelled event is published again, cancelledAt is cleared. The code shown never sets its performances back from CANCELLED, so the event ends up published while its performances stay cancelled.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Restore the CANCELLED guard in setEventStatus (src/modules/events/organizer-service.ts), the same check moderateEvent in admin-service.ts uses. If the team really wants cancelled events to be publishable again, decide that explicitly. That would also mean restoring performance status, keeping cancelledAt, and handling refunds, then updating this test. Don't just delete the assertion.",
+      "bugReport": {
+        "title": "Organizer can publish, unpublish or cancel an already-cancelled event through the API",
+        "severity": "major",
+        "steps": [
+          "As an organizer, create an event with a performance and inventory: POST /api/v1/organizer/events",
+          "POST /api/v1/organizer/events/{id}/status with {\"action\":\"PUBLISH\"}, then {\"action\":\"CANCEL\"}",
+          "POST /api/v1/organizer/events/{id}/status with {\"action\":\"PUBLISH\"} again"
+        ],
+        "expected": "409 CONFLICT, \"A cancelled event cannot change status\". The event stays CANCELLED.",
+        "actual": "200 OK. The event's status goes back to PUBLISHED and cancelledAt is cleared. The performance status update only runs on CANCEL, so the performances appear to stay CANCELLED.",
+        "suspectedCause": "Commit ba606a6 removed `if (event.status === \"CANCELLED\") throw conflict(...)` from setEventStatus in src/modules/events/organizer-service.ts (around line 660). Hiding the buttons on the dashboard (src/app/organizer/page.tsx) does not stop direct API calls. moderateEvent in admin-service.ts and the event update path in the same service still keep this check."
+      },
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/organizer.spec.ts:1-90",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "diff_file src/modules/events/organizer-service.ts",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "search_code (?i)cancelled.*(publish|terminal|final)|cannot.*cancel",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/events/organizer-service.ts:640-740",
+          "observation": "O6",
+          "error": null
+        },
+        {
+          "action": "search_code CANCELLED",
+          "observation": "O7",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/events/organizer-service.ts:515-535",
+          "observation": "O8",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/users/admin-service.ts:185-215",
+          "observation": "O9",
+          "error": null
+        }
+      ],
+      "toolCalls": 8,
+      "usage": {
+        "inputTokens": 12,
+        "outputTokens": 2289,
+        "cacheReadTokens": 20554,
+        "cacheWriteTokens": 9522,
+        "costUsd": 0.09754879999999999
+      },
+      "durationMs": 24934
+    }
+  },
+  {
+    "caseId": "cancelled-event-can-be-republished",
+    "title": "Cancelled event can be published again",
+    "expected": "product-defect",
+    "repetition": 2,
+    "triage": {
+      "failureId": "tests/api/organizer.spec.ts:4 organizers can create, publish, unpublish, and cancel an event",
+      "cause": "product-defect",
+      "confidence": "high",
+      "summary": "The organizer status endpoint now lets a cancelled event be published again: it returns 200 where the test expects 409. Commit ba606a6 removed the guard in setEventStatus that rejected status changes on CANCELLED events. docs/defects.md lists that guard as the fix for a known defect, and the admin moderation path still enforces it, so this is a regression and not a deliberate change in behavior.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "Expected: 409\nReceived: 200",
+          "relevance": "Publishing after CANCEL succeeds instead of being rejected. It failed the same way on both attempts.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "-  if (event.status === \"CANCELLED\")\n-    throw conflict(\"CONFLICT\", \"A cancelled event cannot change status\");",
+          "relevance": "The only change since the baseline removes exactly the check the test relies on.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "Remove the cancelled check from event status changes",
+          "relevance": "The commit justifies the change with ownership and dashboard hiding. Neither of those stops a cancelled event from being re-published through the API.",
+          "verified": true
+        },
+        {
+          "observation": "O7",
+          "quote": "A cancelled event could be moved back to another status                                      | Reject status changes after cancellation",
+          "relevance": "The project documents this behavior as a fixed defect. Removing the check brings that defect back.",
+          "verified": true
+        },
+        {
+          "observation": "O8",
+          "quote": "if (event.status === \"CANCELLED\") {\n    throw conflict(\"CONFLICT\", \"A cancelled event cannot change status\");",
+          "relevance": "The admin moderation path still enforces the same rule, so the rule was not dropped on purpose across the codebase.",
+          "verified": true
+        },
+        {
+          "observation": "O6",
+          "quote": "cancelledAt: action === \"CANCEL\" ? clock.now() : null,",
+          "relevance": "Without the guard, re-publishing a cancelled event sets status back to PUBLISHED and clears cancelledAt.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Revert the guard removal in setEventStatus (src/modules/events/organizer-service.ts) so that any status change on a CANCELLED event throws a 409 conflict again. If the team really wants to allow un-cancelling, that needs an explicit design decision covering performance status, cancelledAt and tickets already sold, plus updates to docs/defects.md and the test. Don't change the test.",
+      "bugReport": {
+        "title": "Organizers can re-publish or unpublish a cancelled event through the status API",
+        "severity": "major",
+        "steps": [
+          "As an organizer, create an event with a performance and inventory (POST /api/v1/organizer/events).",
+          "POST /api/v1/organizer/events/{id}/status with {\"action\":\"PUBLISH\"}, then {\"action\":\"CANCEL\"}.",
+          "POST /api/v1/organizer/events/{id}/status with {\"action\":\"PUBLISH\"} again."
+        ],
+        "expected": "The last request is rejected with 409 CONFLICT (\"A cancelled event cannot change status\") and the event stays CANCELLED.",
+        "actual": "The last request returns 200. The event status is set back to PUBLISHED and cancelledAt is cleared.",
+        "suspectedCause": "Commit ba606a6 removed the `if (event.status === \"CANCELLED\") throw conflict(...)` guard from setEventStatus in src/modules/events/organizer-service.ts. Without it, any action is applied to a cancelled event. The admin moderateEvent path still has this guard, and docs/defects.md lists it as the fix for a known defect."
+      },
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/organizer.spec.ts:1-90",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "diff_file src/modules/events/organizer-service.ts",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "search_code (?i)cancel+ed.*(publish|status|409)|cannot be (re)?published",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/events/organizer-service.ts:645-710",
+          "observation": "O6",
+          "error": null
+        },
+        {
+          "action": "read_file docs/defects.md:1-25",
+          "observation": "O7",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/users/admin-service.ts:185-210",
+          "observation": "O8",
+          "error": null
+        }
+      ],
+      "toolCalls": 7,
+      "usage": {
+        "inputTokens": 10,
+        "outputTokens": 2039,
+        "cacheReadTokens": 16681,
+        "cacheWriteTokens": 3460,
+        "costUsd": 0.061456199999999996
+      },
+      "durationMs": 23412
+    }
+  },
+  {
+    "caseId": "cancelled-event-can-be-republished",
+    "title": "Cancelled event can be published again",
+    "expected": "product-defect",
+    "repetition": 3,
+    "triage": {
+      "failureId": "tests/api/organizer.spec.ts:4 organizers can create, publish, unpublish, and cancel an event",
+      "cause": "product-defect",
+      "confidence": "high",
+      "summary": "After an event is cancelled, the organizer API now accepts a PUBLISH action and returns 200 where the test expects 409. Commit ba606a6 removed the guard in setEventStatus that rejected status changes on cancelled events. Other parts of the codebase still enforce that rule: docs/defects.md, the admin status service and the organizer edit path. The commit justifies the removal by saying the dashboard hides cancelled events, but hiding a button does nothing to stop direct API calls.",
+      "evidence": [
+        {
+          "observation": "O4",
+          "quote": "-  if (event.status === \"CANCELLED\")\n-    throw conflict(\"CONFLICT\", \"A cancelled event cannot change status\");",
+          "relevance": "The only change since the baseline removes the conflict check for cancelled events in the organizer status service.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "Only the owning organizer can change an event's status, and the dashboard hides cancelled events.",
+          "relevance": "The commit's reasoning depends on the UI hiding the controls. It does not describe an intended change to the business rule.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "| A cancelled event could be moved back to another status                                      | Reject status changes after cancellation",
+          "relevance": "The project's defect log lists this exact behavior as a fixed defect, with the fix being to reject status changes after cancellation.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "src/modules/users/admin-service.ts:199:    throw conflict(\"CONFLICT\", \"A cancelled event cannot change status\");",
+          "relevance": "The admin status path still enforces the same rule, so the organizer path now behaves inconsistently with it.",
+          "verified": true
+        },
+        {
+          "observation": "O1",
+          "quote": "Expected: 409\nReceived: 200",
+          "relevance": "The API accepted PUBLISH on a cancelled event. This failed the same way on both attempts.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Revert commit ba606a6, which restores the CANCELLED check in setEventStatus (src/modules/events/organizer-service.ts) so it again returns 409 CONFLICT. Leave the test unchanged. If the team really wants to allow status changes after cancellation, it needs an explicit product decision, and docs/defects.md, the admin-service rule and the checkout and refund logic would all need to change with it.",
+      "bugReport": {
+        "title": "Organizer API lets a cancelled event be re-published",
+        "severity": "major",
+        "steps": [
+          "As an organizer, create an event with POST /api/v1/organizer/events (with a performance and ticket types).",
+          "POST /api/v1/organizer/events/{id}/status with {\"action\":\"PUBLISH\"}, then {\"action\":\"CANCEL\"}.",
+          "POST /api/v1/organizer/events/{id}/status with {\"action\":\"PUBLISH\"} again."
+        ],
+        "expected": "The last request is rejected with 409 CONFLICT (\"A cancelled event cannot change status\") and the event stays CANCELLED.",
+        "actual": "The last request returns 200, so the cancelled event's status is changed again.",
+        "suspectedCause": "Commit ba606a6 removed the `if (event.status === \"CANCELLED\") throw conflict(...)` guard from setEventStatus in src/modules/events/organizer-service.ts (around line 663). The dashboard hides the controls for cancelled events, but the API endpoint can still be called directly. This goes against the rule recorded in docs/defects.md and still enforced in admin-service.ts."
+      },
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/organizer.spec.ts:1-90",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "diff_file src/modules/events/organizer-service.ts",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "search_code (?i)cancel",
+          "observation": "O5",
+          "error": null
+        }
+      ],
+      "toolCalls": 4,
+      "usage": {
+        "inputTokens": 8,
+        "outputTokens": 1626,
+        "cacheReadTokens": 11610,
+        "cacheWriteTokens": 4118,
+        "costUsd": 0.055464
+      },
+      "durationMs": 16751
+    }
+  },
+  {
+    "caseId": "database-unavailable",
+    "title": "Test database unavailable",
+    "expected": "environment-issue",
+    "repetition": 1,
+    "triage": {
+      "failureId": "setup-1",
+      "cause": "environment-issue",
+      "confidence": "medium",
+      "summary": "No test ran. Playwright gave up after 180 s because the web server never answered on its readiness URL (/api/v1/health/ready on port 3100). The code has not changed since the baseline revision, where the tests passed. So the most likely cause is the test environment, not the app: that endpoint fails whenever PostgreSQL is unreachable, and the server can also fail to start in time if `next build` is slow or port 3100 is already in use.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "Error: Timed out waiting 180000ms from config.webServer.",
+          "relevance": "The run failed while waiting for the web server to start. No test assertion was reached.",
+          "verified": true
+        },
+        {
+          "observation": "O2",
+          "quote": "Changed files:\nnone",
+          "relevance": "The code is the same as the baseline revision where the tests passed, so a code regression or an outdated test is very unlikely.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "url: `${testEnvironment.BETTER_AUTH_URL}/api/v1/health/ready`,",
+          "relevance": "Playwright waits for the readiness endpoint, not just for the process to be up.",
+          "verified": true
+        },
+        {
+          "observation": "O8",
+          "quote": "runs a PostgreSQL query and fails if the database\n  is unavailable.",
+          "relevance": "If the test database is down or unreachable, readiness never succeeds and the web server times out.",
+          "verified": true
+        },
+        {
+          "observation": "O6",
+          "quote": "Port 3100 already in use",
+          "relevance": "The repository's own troubleshooting guide lists this as another environment cause of the server failing to start.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Check the CI job log for the steps before Playwright: did `pnpm test:db:up` and `pnpm test:db:prepare` succeed, and is Postgres reachable on 127.0.0.1:55432? Then read the webServer stdout/stderr for `next build` errors, a database connection error, or EADDRINUSE on port 3100. Fix the infrastructure problem and rerun the job. Don't change the test or raise the timeout before the cause is confirmed, because no code changed since the passing baseline.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "list_changes",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "search_code webServer|command:|port:|url:",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "read_file playwright.config.ts:1-70",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "search_code health/ready|ready",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "read_file docs/testing.md:140-170",
+          "observation": "O6",
+          "error": null
+        },
+        {
+          "action": "read_file src/app/api/v1/health/ready/route.ts:1-30",
+          "observation": "O7",
+          "error": null
+        },
+        {
+          "action": "read_file docs/operations.md:1-20",
+          "observation": "O8",
+          "error": null
+        },
+        {
+          "action": "read_file .github/workflows/quality.yml:1-60",
+          "observation": "O9",
+          "error": null
+        }
+      ],
+      "toolCalls": 8,
+      "usage": {
+        "inputTokens": 12,
+        "outputTokens": 1714,
+        "cacheReadTokens": 18683,
+        "cacheWriteTokens": 8422,
+        "costUsd": 0.0801746
+      },
+      "durationMs": 20170
+    }
+  },
+  {
+    "caseId": "database-unavailable",
+    "title": "Test database unavailable",
+    "expected": "environment-issue",
+    "repetition": 2,
+    "triage": {
+      "failureId": "setup-1",
+      "cause": "environment-issue",
+      "confidence": "medium",
+      "summary": "No test ran: Playwright gave up after 180 s waiting for the web server to become ready. Nothing changed since the baseline revision, where the tests passed, so a code change is unlikely to be the cause. The readiness URL `/api/v1/health/ready` runs a PostgreSQL query, so the most likely causes are that the test database was unavailable or that the production build and start took longer than the timeout on this machine.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "Error: Timed out waiting 180000ms from config.webServer.",
+          "relevance": "The run failed while starting the server, before any test executed.",
+          "verified": true
+        },
+        {
+          "observation": "O2",
+          "quote": "Commits since f9313a6f879d5602105c25bac6540c4d756a8670:\nnone",
+          "relevance": "Code is identical to the baseline where tests passed, so a regression or intended change is unlikely.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "url: `${testEnvironment.BETTER_AUTH_URL}/api/v1/health/ready`,",
+          "relevance": "Playwright waits for the readiness endpoint, not just for the process to start.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "`GET /api/v1/health/ready` runs a PostgreSQL query and fails if the database",
+          "relevance": "Readiness depends on the test database, so the server never counts as ready if PostgreSQL is unreachable.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "next build && node node_modules/next/dist/bin/next start --port 3100",
+          "relevance": "A full production build counts against the 180 s timeout, so a slow or overloaded machine can also cause the timeout.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Check that the test services are up before running Playwright: in CI, the compose.test.yaml PostgreSQL container should be listening on port 55432 with the seatwise_test database. Also check that port 3100 is free. Read the webServer stdout/stderr in the job log to see whether `next build` finished or the readiness check kept failing on the database. If it was the build taking too long, raise the webServer timeout or build in a separate step. Then rerun.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "list_changes",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "search_code webServer|command:|url:|port",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "read_file playwright.config.ts:40-65",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "search_code health/ready|ready/route",
+          "observation": "O5",
+          "error": null
+        }
+      ],
+      "toolCalls": 4,
+      "usage": {
+        "inputTokens": 8,
+        "outputTokens": 1255,
+        "cacheReadTokens": 10354,
+        "cacheWriteTokens": 4193,
+        "costUsd": 0.0481678
+      },
+      "durationMs": 13688
+    }
+  },
+  {
+    "caseId": "database-unavailable",
+    "title": "Test database unavailable",
+    "expected": "environment-issue",
+    "repetition": 3,
+    "triage": {
+      "failureId": "setup-1",
+      "cause": "environment-issue",
+      "confidence": "medium",
+      "summary": "The run stopped before any test ran: Playwright's webServer (production `next build` followed by `next start --port 3100`) never got a successful response from `/api/v1/health/ready` within 180 s. No commits or files have changed since the baseline where the tests passed, so a code regression or an intended behavior change cannot explain it. The cause is in the run environment: the readiness endpoint fails while PostgreSQL is unreachable, and the build/start can also be held up by a slow machine or a busy port.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "Error: Timed out waiting 180000ms from config.webServer.",
+          "relevance": "The failure happened while starting the server, before any test code ran.",
+          "verified": true
+        },
+        {
+          "observation": "O2",
+          "quote": "Commits since f9313a6f879d5602105c25bac6540c4d756a8670:\nnone",
+          "relevance": "The code under test is the same as at the passing baseline, which rules out a regression or an intended change.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "url: `${testEnvironment.BETTER_AUTH_URL}/api/v1/health/ready`,",
+          "relevance": "Playwright waits for the readiness endpoint, not just for the process to start.",
+          "verified": true
+        },
+        {
+          "observation": "O7",
+          "quote": "`GET /api/v1/health/ready` runs a PostgreSQL query and fails if the database\n  is unavailable.",
+          "relevance": "Readiness depends on the external test database (127.0.0.1:55432), so if that database is missing or unhealthy the webServer times out.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "\"node node_modules/next/dist/bin/next build && node node_modules/next/dist/bin/next start --port 3100\",",
+          "relevance": "A full production build is inside the 180 s budget, so a slow runner or a port 3100 conflict could also cause the timeout.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Check the CI job log for the `pnpm test:db:up` / `pnpm test:db:prepare` steps and the webServer output. Confirm that the PostgreSQL container on 127.0.0.1:55432 was healthy, that `next build` finished, and that port 3100 was free. Then rerun the job. If it keeps failing with the database healthy, call `/api/v1/health/ready` by hand on a local production build to find out what is blocking readiness. Consider raising the webServer timeout or building in a separate CI step, so build time doesn't count against the readiness wait.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "list_changes",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "search_code webServer|command:|port:|url:",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "read_file playwright.config.ts:1-70",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "search_code health/ready|/ready",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "read_file tests/support/environment.ts:1-60",
+          "observation": "O6",
+          "error": null
+        },
+        {
+          "action": "read_file docs/operations.md:1-30",
+          "observation": "O7",
+          "error": null
+        },
+        {
+          "action": "read_file .github/workflows/quality.yml:1-70",
+          "observation": "O8",
+          "error": null
+        }
+      ],
+      "toolCalls": 7,
+      "usage": {
+        "inputTokens": 12,
+        "outputTokens": 1775,
+        "cacheReadTokens": 19046,
+        "cacheWriteTokens": 5128,
+        "costUsd": 0.0649972
+      },
+      "durationMs": 23470
+    }
+  },
+  {
+    "caseId": "declined-payment-cannot-be-retried",
+    "title": "Declined payment cannot be retried in the cart",
+    "expected": "product-defect",
+    "repetition": 1,
+    "triage": {
+      "failureId": "tests/ui/booking.spec.ts:45 declined payments show an error and can be retried",
+      "cause": "product-defect",
+      "confidence": "high",
+      "summary": "Commit a9e8419 removed the line in cart-view.tsx that cleared the checkout idempotency key after a retryable failure. Now, when a payment is declined and the user retries with a different payment outcome, the browser sends the same key with a different request body. The server rejects this with \"This idempotency key belongs to a different checkout request\", so the payment never completes and \"Payment confirmed\" never appears. The test failed the same way on both attempts, and its expectation matches the documented rule that the key is kept only until the payment has definitely failed.",
+      "evidence": [
+        {
+          "observation": "O5",
+          "quote": "-        if (\"error\" in payload && payload.error?.details?.retryable)\n-          checkoutKey.current = null;",
+          "relevance": "The only change since the baseline removes the reset of the checkout key after a retryable payment failure.",
+          "verified": true
+        },
+        {
+          "observation": "O7",
+          "quote": "checkoutKey.current ??= crypto.randomUUID();",
+          "relevance": "The key is only created when it is null, so after this change every retry from the cart reuses the key from the first payment attempt.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "alert: This idempotency key belongs to a different checkout request",
+          "relevance": "At the moment of failure, the cart shows the server's error for a key reused with different input, not a confirmation.",
+          "verified": true
+        },
+        {
+          "observation": "O8",
+          "quote": "{ orderId, retryable: true },",
+          "relevance": "The server marks declined, timed-out and failed payments as retryable, which is the signal the removed client code used to reset the key.",
+          "verified": true
+        },
+        {
+          "observation": "O9",
+          "quote": "Keep the key until the payment has definitely failed",
+          "relevance": "A documented earlier fix says the key should be dropped once a payment has definitely failed. The commit breaks that rule, so this is a regression rather than an intended behavior change.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Revert or fix commit a9e8419. After a retryable failure response, clear checkoutKey.current again, or at least after a definite failure such as PAYMENT_DECLINED. Keep the existing key only for uncertain outcomes such as network errors, so the lost-response protection still works. Then rerun this test and \"network failure leaves checkout usable\" in tests/ui/booking.spec.ts.",
+      "bugReport": {
+        "title": "Retrying checkout after a declined payment fails with 'This idempotency key belongs to a different checkout request'",
+        "severity": "major",
+        "steps": [
+          "Sign in as a customer and reserve a seat so you reach /cart/<reservationId>.",
+          "In the Payment simulator, select 'Declined payment' and click 'Pay and get tickets'.",
+          "Wait for the alert 'Payment was declined...'.",
+          "Select 'Successful payment' and click 'Pay and get tickets' again."
+        ],
+        "expected": "The second attempt is processed as a new payment, the user is redirected to the order page with 'Payment confirmed', and one ticket is issued.",
+        "actual": "The cart stays on the page and shows the alert 'This idempotency key belongs to a different checkout request'. No payment is confirmed, so the customer cannot complete the purchase after a decline without reloading the page.",
+        "suspectedCause": "Commit a9e8419 ('Keep one checkout key per cart') removed `checkoutKey.current = null` for retryable error responses in src/modules/reservations/cart-view.tsx (pay(), around line 150). Because the key is created with `checkoutKey.current ??= crypto.randomUUID()`, the retry reuses the first attempt's key with a different paymentToken. The request-hash check in checkout-service.ts then rejects it. This contradicts docs/defects.md: 'Keep the key until the payment has definitely failed'."
+      },
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/ui/booking.spec.ts:1-80",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "read_attachment chromium:0:error-context",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "diff_file src/modules/reservations/cart-view.tsx",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "search_code idempotency|Idempotency",
+          "observation": "O6",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/reservations/cart-view.tsx:120-162",
+          "observation": "O7",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/orders/checkout-service.ts:555-580",
+          "observation": "O8",
+          "error": null
+        },
+        {
+          "action": "read_file docs/defects.md:1-20",
+          "observation": "O9",
+          "error": null
+        }
+      ],
+      "toolCalls": 8,
+      "usage": {
+        "inputTokens": 10,
+        "outputTokens": 2199,
+        "cacheReadTokens": 23033,
+        "cacheWriteTokens": 13824,
+        "costUsd": 0.1177466
+      },
+      "durationMs": 24084
+    }
+  },
+  {
+    "caseId": "declined-payment-cannot-be-retried",
+    "title": "Declined payment cannot be retried in the cart",
+    "expected": "product-defect",
+    "repetition": 2,
+    "triage": {
+      "failureId": "tests/ui/booking.spec.ts:45 declined payments show an error and can be retried",
+      "cause": "product-defect",
+      "confidence": "high",
+      "summary": "After a declined payment, the cart page no longer clears its checkout idempotency key. The retry with \"Successful payment\" therefore sends the same key with different checkout input, and the server rejects it with \"This idempotency key belongs to a different checkout request\", so \"Payment confirmed\" never appears. The only change since the baseline is commit a9e8419 (\"Keep one checkout key per cart\"), which removed the reset of `checkoutKey.current` on retryable errors.",
+      "evidence": [
+        {
+          "observation": "O3",
+          "quote": "alert: This idempotency key belongs to a different checkout request",
+          "relevance": "At the moment of failure the cart shows the server's idempotency-mismatch error instead of the payment confirmation.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "-        if (\"error\" in payload && payload.error?.details?.retryable)\n-          checkoutKey.current = null;",
+          "relevance": "The only change since the baseline removed the key reset after a retryable payment failure.",
+          "verified": true
+        },
+        {
+          "observation": "O7",
+          "quote": "{ orderId, retryable: true },",
+          "relevance": "A declined payment is marked retryable by the server, so before this change the client would have made a new key for the retry.",
+          "verified": true
+        },
+        {
+          "observation": "O7",
+          "quote": "Try again with a new idempotency key.",
+          "relevance": "The server's own failure message tells the client to use a new key after a definite failure.",
+          "verified": true
+        },
+        {
+          "observation": "O8",
+          "quote": "Keep the key until the payment has definitely failed",
+          "relevance": "The documented rule is to reuse a key only while the outcome is uncertain. A decline is a definite failure, so the commit breaks that rule.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Revert the deletion in src/modules/reservations/cart-view.tsx, so `checkoutKey.current` is set back to null when the error has `details.retryable`. If the goal of a9e8419 was to keep the key after uncertain responses such as network loss or timeouts, reset it only for definite failures like PAYMENT_DECLINED. Keep this test as it is: it caught the regression.",
+      "bugReport": {
+        "title": "Retrying checkout after a declined payment fails with an idempotency-key mismatch",
+        "severity": "critical",
+        "steps": [
+          "Sign in as a customer and reserve a seat, then open /cart/{reservationId}",
+          "In the Payment simulator, select 'Declined payment' and click 'Pay and get tickets'",
+          "Check that the alert says 'Payment was declined'",
+          "Select 'Successful payment' and click 'Pay and get tickets' again"
+        ],
+        "expected": "The second attempt uses a new idempotency key, the payment succeeds, 'Payment confirmed' is shown and one ticket is issued.",
+        "actual": "The cart stays open and shows the alert 'This idempotency key belongs to a different checkout request'. No payment is confirmed. The customer cannot complete the purchase from this cart after a decline.",
+        "suspectedCause": "Commit a9e8419 removed the `checkoutKey.current = null` reset in src/modules/reservations/cart-view.tsx (around line 156) that ran on retryable errors. The browser now sends the old key with a different payment outcome, and the request-hash check in checkout-service.ts (line 110) rejects it as a mismatch. This also contradicts docs/defects.md, which says to keep the key only until the payment has definitely failed."
+      },
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/ui/booking.spec.ts:1-80",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "read_attachment chromium:0:error-context",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "diff_file src/modules/reservations/cart-view.tsx",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "search_code idempotency|different checkout request|setKey|IdempotencyKey",
+          "observation": "O6",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/orders/checkout-service.ts:555-580",
+          "observation": "O7",
+          "error": null
+        },
+        {
+          "action": "read_file docs/defects.md:1-20",
+          "observation": "O8",
+          "error": null
+        }
+      ],
+      "toolCalls": 7,
+      "usage": {
+        "inputTokens": 10,
+        "outputTokens": 1935,
+        "cacheReadTokens": 25885,
+        "cacheWriteTokens": 10142,
+        "costUsd": 0.09462699999999999
+      },
+      "durationMs": 22119
+    }
+  },
+  {
+    "caseId": "declined-payment-cannot-be-retried",
+    "title": "Declined payment cannot be retried in the cart",
+    "expected": "product-defect",
+    "repetition": 3,
+    "triage": {
+      "failureId": "tests/ui/booking.spec.ts:45 declined payments show an error and can be retried",
+      "cause": "product-defect",
+      "confidence": "high",
+      "summary": "After a declined payment, the cart page now reuses the same Idempotency-Key when the customer retries with a different payment token. The server rejects the retry with \"This idempotency key belongs to a different checkout request\", so \"Payment confirmed\" never appears. Commit a9e8419 removed the client code that cleared the key after a retryable failure. That change contradicts the documented API contract and the server's own error messages, and leaves the customer unable to pay for that cart.",
+      "evidence": [
+        {
+          "observation": "O5",
+          "quote": "-        if (\"error\" in payload && payload.error?.details?.retryable)\n-          checkoutKey.current = null;",
+          "relevance": "The only change since the baseline removes the reset of the checkout key after a retryable failure, so the retry sends the old key.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "alert: This idempotency key belongs to a different checkout request",
+          "relevance": "At the moment of failure the page shows the server rejecting the retry because the reused key was first sent with different checkout input.",
+          "verified": true
+        },
+        {
+          "observation": "O7",
+          "quote": "A failed payment is durable. A deliberate retry uses a new key while the",
+          "relevance": "The API documentation says a retry after a failed payment must use a new key. The change breaks this rule.",
+          "verified": true
+        },
+        {
+          "observation": "O8",
+          "quote": "{ orderId, retryable: true },",
+          "relevance": "The server marks declined, timed-out and failed payments as retryable, and the client code that was removed relied on this flag.",
+          "verified": true
+        },
+        {
+          "observation": "O8",
+          "quote": "Payment could not be processed. Try again with a new idempotency key.",
+          "relevance": "The server's own messages still expect clients to retry with a fresh key.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "src/modules/reservations/cart-view.tsx | 2 --",
+          "relevance": "Only the client changed. The docs and the server-side idempotency checks were not updated, which points to a regression rather than a coordinated design change.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Put back the reset in CartView.pay(): set checkoutKey.current = null when the error payload has details.retryable. Keep the key only for uncertain outcomes such as lost responses or network errors, as docs/defects.md and docs/api.md describe. If the goal of a9e8419 was a single key per cart, it needs a server and API redesign, because today the server rejects a reused key with a different payment token. Keep this test as the regression check.",
+      "bugReport": {
+        "title": "Customers cannot retry checkout after a declined payment (idempotency key reused)",
+        "severity": "critical",
+        "steps": [
+          "Sign in as a customer and reserve a seat, then open /cart/{reservationId}",
+          "In the Payment simulator, select 'Declined payment' and click 'Pay and get tickets'",
+          "See the alert 'Payment was declined...'",
+          "Select 'Successful payment' and click 'Pay and get tickets' again"
+        ],
+        "expected": "The second checkout uses a new Idempotency-Key, the payment succeeds, 'Payment confirmed' is shown and one ticket is issued.",
+        "actual": "The second checkout reuses the first key. The server answers with the alert 'This idempotency key belongs to a different checkout request', no order is paid, and the cart stays stuck until the reservation expires.",
+        "suspectedCause": "Commit a9e8419 removed `if (payload.error?.details?.retryable) checkoutKey.current = null;` from pay() in src/modules/reservations/cart-view.tsx. Because of `checkoutKey.current ??= crypto.randomUUID()`, every later attempt sends the original key. checkout-service.ts stores a hash of the request with the key and rejects the same key when the paymentToken differs."
+      },
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/ui/booking.spec.ts:1-80",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "read_attachment chromium:0:error-context",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "diff_file src/modules/reservations/cart-view.tsx",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "search_code idempotency|different checkout request",
+          "observation": "O6",
+          "error": null
+        },
+        {
+          "action": "read_file docs/api.md:58-85",
+          "observation": "O7",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/orders/checkout-service.ts:555-580",
+          "observation": "O8",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/reservations/cart-view.tsx:120-165",
+          "observation": "O9",
+          "error": null
+        }
+      ],
+      "toolCalls": 8,
+      "usage": {
+        "inputTokens": 10,
+        "outputTokens": 2252,
+        "cacheReadTokens": 31440,
+        "cacheWriteTokens": 5016,
+        "costUsd": 0.076448
+      },
+      "durationMs": 25172
+    }
+  },
+  {
+    "caseId": "idempotency-key-ignores-payment-change",
+    "title": "Reused idempotency key with another payment method",
+    "expected": "product-defect",
+    "repetition": 1,
+    "triage": {
+      "failureId": "tests/api/checkout.spec.ts:7 an idempotency key cannot change payment parameters",
+      "cause": "product-defect",
+      "confidence": "high",
+      "summary": "The test reuses an idempotency key with a different payment token. It expects a 409 conflict but gets 402, because the replay is treated as the same request and the stored payment failure is returned. Commit dbadc1b removed the requestHash comparison from the conflict check and now only compares reservationId. The hash also covers the payment token, so dropping the check brings back a defect the project had already fixed and documented.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "Expected: 409\nReceived: 402",
+          "relevance": "The second checkout, which reuses the key with pm_success, is not rejected as a conflict.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "-    (order.requestHash !== null && order.requestHash !== requestHash)",
+          "relevance": "The only change since the baseline removes the request-hash mismatch check.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "An order belongs to exactly one reservation, so comparing the reservation id is enough.",
+          "relevance": "The commit assumes only the reservation id matters. This ignores other request fields, such as the payment token.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": ".update(JSON.stringify(input))",
+          "relevance": "The hash is built from the whole input, payment token included, so it detects changed payment parameters that the reservation id check misses.",
+          "verified": true
+        },
+        {
+          "observation": "O6",
+          "quote": "An idempotency key could be reused with different checkout input                             | Store a hash of the request with the order and reject a mismatch",
+          "relevance": "The project documents this exact behavior as a fixed defect, so the test's expectation is intended.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Put the requestHash mismatch condition back in the conflict check in src/modules/orders/checkout-service.ts, as `order.reservationId !== input.reservationId || (order.requestHash !== null && order.requestHash !== requestHash)`. If the goal was simplification, remove the reservationId comparison instead, because the hash already covers it. Leave the test unchanged.",
+      "bugReport": {
+        "title": "Idempotency key can be reused with a different payment token; conflict check ignores request hash",
+        "severity": "major",
+        "steps": [
+          "Reserve a seat as a customer and note the reservation id.",
+          "POST checkout for that reservation with paymentToken pm_decline and Idempotency-Key K. Observe 402.",
+          "POST checkout again for the same reservation with paymentToken pm_success and the same Idempotency-Key K."
+        ],
+        "expected": "409 CONFLICT with 'This idempotency key belongs to a different checkout request', because the request body differs from the one bound to the key.",
+        "actual": "402 is returned. The second request is treated as a replay of the first, and its changed payment parameters are not detected.",
+        "suspectedCause": "Commit dbadc1b changed the check in checkout() in src/modules/orders/checkout-service.ts (around line 104) to `if (order.reservationId !== input.reservationId)` and dropped the `order.requestHash !== requestHash` comparison. requestHash is still computed from the full input and stored, but it is never checked. Different inputs for the same reservation therefore pass, which reopens the fixed defect listed in docs/defects.md. Depending on the order's state, the replay may also return a result that does not match the request."
+      },
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/checkout.spec.ts:1-40",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "diff_file src/modules/orders/checkout-service.ts",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/orders/checkout-service.ts:60-140",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "search_code requestHash|idempotency key",
+          "observation": "O6",
+          "error": null
+        }
+      ],
+      "toolCalls": 5,
+      "usage": {
+        "inputTokens": 10,
+        "outputTokens": 1704,
+        "cacheReadTokens": 11063,
+        "cacheWriteTokens": 6290,
+        "costUsd": 0.0677826
+      },
+      "durationMs": 19572
+    }
+  },
+  {
+    "caseId": "idempotency-key-ignores-payment-change",
+    "title": "Reused idempotency key with another payment method",
+    "expected": "product-defect",
+    "repetition": 2,
+    "triage": {
+      "failureId": "tests/api/checkout.spec.ts:7 an idempotency key cannot change payment parameters",
+      "cause": "product-defect",
+      "confidence": "high",
+      "summary": "Commit dbadc1b removed the request-hash comparison from the idempotency conflict check in checkout-service.ts. Only the reservation id is compared now. Reusing an idempotency key with a different payment token (pm_success after pm_decline) is no longer rejected with 409: the server replays the stored PAYMENT_FAILED result and returns 402. The commit message says comparing the reservation id is enough, but that ignores the other request parameters, such as the payment token, that the hash binds to the key.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "Expected: 409\nReceived: 402",
+          "relevance": "The second checkout, same key but a different payment token, did not get the conflict response.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "-    (order.requestHash !== null && order.requestHash !== requestHash)",
+          "relevance": "The only commit since the baseline removed the check that rejected a reused key with different request parameters.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "An order belongs to exactly one reservation, so comparing the reservation id is enough.",
+          "relevance": "The commit's reasoning only covers the reservation id and does not consider the payment token or other inputs.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "const requestHash = createHash(\"sha256\")\n    .update(JSON.stringify(input))",
+          "relevance": "The hash is built from the whole input, including paymentToken. It is still computed and stored but no longer checked.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "if (order.status === \"PAYMENT_FAILED\") {\n    throwPaymentError(order.id, order.paymentAttempts[0]?.status);",
+          "relevance": "Without the hash check, the mismatched request falls through and replays the earlier decline as 402.",
+          "verified": true
+        },
+        {
+          "observation": "O6",
+          "quote": "prisma/migrations/20260916171500_bind_checkout_request/migration.sql:1:ALTER TABLE \"orders\" ADD COLUMN \"requestHash\" TEXT;",
+          "relevance": "A dedicated migration added the column so a checkout request is bound to its key. The schema still depends on this rule.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Put the requestHash comparison back into the conflict check in src/modules/orders/checkout-service.ts (revert dbadc1b's condition), so that reusing a key with different parameters returns 409 CONFLICT. Keep the test as it is.",
+      "bugReport": {
+        "title": "Reusing an idempotency key with a different payment token is not rejected (402 replay instead of 409)",
+        "severity": "major",
+        "steps": [
+          "Reserve a seat as a customer and note the reservation id.",
+          "POST a checkout for that reservation with paymentToken pm_decline and Idempotency-Key K; it returns 402.",
+          "POST a checkout for the same reservation with paymentToken pm_success and the same Idempotency-Key K."
+        ],
+        "expected": "The second request returns 409 CONFLICT (\"This idempotency key belongs to a different checkout request\") because the parameters differ from the original request bound to the key.",
+        "actual": "The second request returns 402: the stored PAYMENT_FAILED result is replayed, and the parameter mismatch is ignored.",
+        "suspectedCause": "Commit dbadc1b (\"Simplify the idempotency conflict check\") cut the condition in checkout() in src/modules/orders/checkout-service.ts (around line 104) down to `order.reservationId !== input.reservationId`. It dropped `order.requestHash !== null && order.requestHash !== requestHash`. requestHash covers the full input, including paymentToken, so it is still computed and stored but never compared."
+      },
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/checkout.spec.ts:1-40",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "diff_file src/modules/orders/checkout-service.ts",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/orders/checkout-service.ts:60-160",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "search_code requestHash",
+          "observation": "O6",
+          "error": null
+        }
+      ],
+      "toolCalls": 5,
+      "usage": {
+        "inputTokens": 10,
+        "outputTokens": 1892,
+        "cacheReadTokens": 13860,
+        "cacheWriteTokens": 3613,
+        "costUsd": 0.058717
+      },
+      "durationMs": 20810
+    }
+  },
+  {
+    "caseId": "idempotency-key-ignores-payment-change",
+    "title": "Reused idempotency key with another payment method",
+    "expected": "product-defect",
+    "repetition": 3,
+    "triage": {
+      "failureId": "tests/api/checkout.spec.ts:7 an idempotency key cannot change payment parameters",
+      "cause": "product-defect",
+      "confidence": "high",
+      "summary": "Reusing an idempotency key with a different payment token now gets 402 (the stored declined payment is replayed) instead of 409 Conflict. Commit dbadc1b removed the `requestHash` comparison from the conflict check in checkout-service.ts, so now only the reservation id is compared. The commit reasons that an order belongs to one reservation, but that ignores other request fields such as `paymentToken`. docs/defects.md still says a mismatched request must be rejected.",
+      "evidence": [
+        {
+          "observation": "O4",
+          "quote": "-    (order.requestHash !== null && order.requestHash !== requestHash)",
+          "relevance": "The commit under test deleted the check that rejects a reused key whose request input differs.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "An order belongs to exactly one reservation, so comparing the reservation id is enough.",
+          "relevance": "The commit gives a reason that doesn't hold: the request hash also covers the payment token, not just the reservation id.",
+          "verified": true
+        },
+        {
+          "observation": "O7",
+          "quote": "Store a hash of the request with the order and reject a mismatch",
+          "relevance": "The project's defect log records this check as a required fix, so removing it brings back a known defect.",
+          "verified": true
+        },
+        {
+          "observation": "O6",
+          "quote": "if (order.status === \"PAYMENT_FAILED\") {\n    throwPaymentError(order.id, order.paymentAttempts[0]?.status);",
+          "relevance": "Without the hash check, the second request goes on to replay the stored failure. That explains the 402 the test got.",
+          "verified": true
+        },
+        {
+          "observation": "O1",
+          "quote": "Expected: 409\nReceived: 402",
+          "relevance": "The failure matches the missing conflict check and happened on both attempts.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Put back the `order.requestHash !== null && order.requestHash !== requestHash` condition in the conflict check in src/modules/orders/checkout-service.ts, or revert dbadc1b. Leave the test as it is: its expectation matches the documented behaviour.",
+      "bugReport": {
+        "title": "Idempotency key can be reused with a different payment token; no 409 conflict",
+        "severity": "major",
+        "steps": [
+          "As a customer, reserve a seat and note the reservation id.",
+          "POST checkout for that reservation with paymentToken \"pm_decline\" and idempotency key K. The response is 402.",
+          "POST checkout again for the same reservation with paymentToken \"pm_success\" and the same key K."
+        ],
+        "expected": "The second request is rejected with 409 CONFLICT (\"This idempotency key belongs to a different checkout request\") because the request input differs from the one stored with the key.",
+        "actual": "The second request returns 402 because the stored declined payment is replayed. The changed request is not flagged as a conflict.",
+        "suspectedCause": "Commit dbadc1b changed the conflict check in checkout() (src/modules/orders/checkout-service.ts, around line 104) to compare only `order.reservationId !== input.reservationId`. It dropped the comparison of the stored `requestHash` with the hash of the current input, so requests on the same reservation that differ in other fields, such as paymentToken, are no longer rejected."
+      },
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/checkout.spec.ts:1-40",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "diff_file src/modules/orders/checkout-service.ts",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "read_attachment api:0:error-context",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/orders/checkout-service.ts:40-180",
+          "observation": "O6",
+          "error": null
+        },
+        {
+          "action": "search_code requestHash|idempotency key",
+          "observation": "O7",
+          "error": null
+        }
+      ],
+      "toolCalls": 6,
+      "usage": {
+        "inputTokens": 10,
+        "outputTokens": 1867,
+        "cacheReadTokens": 17437,
+        "cacheWriteTokens": 5820,
+        "costUsd": 0.0699674
+      },
+      "durationMs": 22318
+    }
+  },
+  {
+    "caseId": "payment-button-renamed",
+    "title": "Payment button renamed",
+    "expected": "outdated-test",
+    "repetition": 1,
+    "triage": {
+      "failureId": "tests/ui/booking.spec.ts:45 declined payments show an error and can be retried",
+      "cause": "outdated-test",
+      "confidence": "high",
+      "summary": "The test timed out at line 53 while waiting for a button named 'Pay and get tickets'. Commit 4c93376 deliberately renamed the payment button to 'Pay now' (and 'Jetzt bezahlen' in German), and the page snapshot shows a 'Pay now' button with no button under the old name. The checkout page works; the test still looks for the old label.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "waiting for getByRole('button', { name: 'Pay and get tickets' })",
+          "relevance": "The click timed out because no button with the old name was found.",
+          "verified": true
+        },
+        {
+          "observation": "O2",
+          "quote": "button \"Pay now\" [ref=e90]",
+          "relevance": "When the test failed, the cart page showed the payment button under its new label.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "The long label wrapped on small screens. 'Pay now' fits on one line in every supported language.",
+          "relevance": "The commit message describes the rename as intended.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "+    \"payAndGet\": \"Pay now\",",
+          "relevance": "The English translation key for the button was changed to the new label.",
+          "verified": true
+        },
+        {
+          "observation": "O6",
+          "quote": "+    \"payAndGet\": \"Jetzt bezahlen\",",
+          "relevance": "The German label was shortened too, so the change was applied in every language.",
+          "verified": true
+        }
+      ],
+      "recommendation": "In tests/ui/booking.spec.ts, replace every getByRole('button', { name: 'Pay and get tickets' }) with { name: 'Pay now' } at lines 27, 53, 58, 61, 108, 113 and 115. Line 27 is in the booking test and lines 108–115 are in the network-failure test, so both will break the same way. Then search the rest of the suite for the old label. Use exact: true or scope the locator to the order summary so it can't match other buttons that contain \"Pay\".",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_attachment chromium:0:error-context",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "read_file tests/ui/booking.spec.ts:40-70",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "diff_file messages/en.json",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "diff_file messages/de.json",
+          "observation": "O6",
+          "error": null
+        }
+      ],
+      "toolCalls": 5,
+      "usage": {
+        "inputTokens": 8,
+        "outputTokens": 1070,
+        "cacheReadTokens": 11074,
+        "cacheWriteTokens": 8765,
+        "costUsd": 0.0674718
+      },
+      "durationMs": 14411
+    }
+  },
+  {
+    "caseId": "payment-button-renamed",
+    "title": "Payment button renamed",
+    "expected": "outdated-test",
+    "repetition": 2,
+    "triage": {
+      "failureId": "tests/ui/booking.spec.ts:45 declined payments show an error and can be retried",
+      "cause": "outdated-test",
+      "confidence": "high",
+      "summary": "The test waits for a button named \"Pay and get tickets\" and times out, because commit 4c93376 deliberately renamed the button to \"Pay now\" in both English and German. The cart page loaded normally and shows a \"Pay now\" button, so checkout itself works. The test still expects the old label.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "waiting for getByRole('button', { name: 'Pay and get tickets' })",
+          "relevance": "The test timed out waiting for a button with the old label.",
+          "verified": true
+        },
+        {
+          "observation": "O2",
+          "quote": "button \"Pay now\" [ref=e90]",
+          "relevance": "At the moment of failure, the cart page shows the payment button with its new label.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "Shorten the payment button label",
+          "relevance": "The commit message describes the rename as intentional, with a reason given (the long label wrapped on small screens).",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "+    \"payAndGet\": \"Pay now\",",
+          "relevance": "The English message key changed from \"Pay and get tickets\" to \"Pay now\".",
+          "verified": true
+        },
+        {
+          "observation": "O6",
+          "quote": "+    \"payAndGet\": \"Jetzt bezahlen\",",
+          "relevance": "The German text was changed too, so this is a consistent, deliberate change and not a regression.",
+          "verified": true
+        }
+      ],
+      "recommendation": "In tests/ui/booking.spec.ts, change the payment button locators from \"Pay and get tickets\" to \"Pay now\" (lines 53, 58 and 61 in this test). The same label is used in the other tests in this file (lines 27, 108, 113 and 115), so change those too. If you want to avoid this kind of breakage next time, build locators from the messages/en.json key `payAndGet` rather than hard-coding the text.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_attachment chromium:0:error-context",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "read_file tests/ui/booking.spec.ts:40-70",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "diff_file messages/en.json",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "diff_file messages/de.json",
+          "observation": "O6",
+          "error": null
+        }
+      ],
+      "toolCalls": 5,
+      "usage": {
+        "inputTokens": 8,
+        "outputTokens": 1043,
+        "cacheReadTokens": 19839,
+        "cacheWriteTokens": 0,
+        "costUsd": 0.0248598
+      },
+      "durationMs": 13021
+    }
+  },
+  {
+    "caseId": "payment-button-renamed",
+    "title": "Payment button renamed",
+    "expected": "outdated-test",
+    "repetition": 3,
+    "triage": {
+      "failureId": "tests/ui/booking.spec.ts:45 declined payments show an error and can be retried",
+      "cause": "outdated-test",
+      "confidence": "high",
+      "summary": "The test timed out at line 53 because it waits for a button named 'Pay and get tickets', and the cart page no longer has one. Commit 4c93376 renamed the button to 'Pay now' on purpose, because the long label wrapped on small screens. The page at the moment of failure shows the 'Pay now' button with the declined outcome already selected, so the checkout page is working. The test still uses the old label.",
+      "evidence": [
+        {
+          "observation": "O4",
+          "quote": "The long label wrapped on small screens. 'Pay now' fits on one line in every supported language.",
+          "relevance": "The commit message describes the rename as an intended change and gives the reason.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "+    \"payAndGet\": \"Pay now\",",
+          "relevance": "The English text for the payment button changed from 'Pay and get tickets' to 'Pay now'.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "button \"Pay now\" [ref=e90]",
+          "relevance": "The page at the moment of failure has the renamed button and no 'Pay and get tickets' button, which is why the click waited until the timeout.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "radio \"Declined payment\" [checked] [active] [ref=e73]",
+          "relevance": "The step before the failure worked: the page loaded and the declined outcome was selected.",
+          "verified": true
+        },
+        {
+          "observation": "O6",
+          "quote": "tests/ui/booking.spec.ts:108:  await page.getByRole(\"button\", { name: \"Pay and get tickets\" }).click();",
+          "relevance": "Other tests in the same file still use the old label, so they will break the same way.",
+          "verified": true
+        }
+      ],
+      "recommendation": "In tests/ui/booking.spec.ts, change every 'Pay and get tickets' locator to 'Pay now' (lines 27, 53, 58, 61, 108, 113 and 115). Because getByRole matches substrings by default, consider adding exact: true. Also update step 4 in docs/demo.md, which still says 'Pay and get tickets'. Commit 4c93376 also changed messages/de.json. I didn't read that diff, so check that nothing that depends on the German text still uses the old wording.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/ui/booking.spec.ts:1-80",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "read_attachment chromium:0:error-context",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "diff_file messages/en.json",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "search_code Pay and get tickets",
+          "observation": "O6",
+          "error": null
+        }
+      ],
+      "toolCalls": 5,
+      "usage": {
+        "inputTokens": 8,
+        "outputTokens": 1204,
+        "cacheReadTokens": 15022,
+        "cacheWriteTokens": 7043,
+        "costUsd": 0.062331399999999995
+      },
+      "durationMs": 21532
+    }
+  },
+  {
+    "caseId": "promotion-checked-after-fixed-wait",
+    "title": "Promotion checked after a fixed wait",
+    "expected": "flaky-test",
+    "repetition": 1,
+    "triage": {
+      "failureId": "tests/ui/booking.spec.ts:5 customer signs in, books a seat, and opens the issued QR ticket",
+      "cause": "flaky-test",
+      "confidence": "high",
+      "summary": "The test clicks \"Apply\", waits a fixed 30 ms, then checks the promotion line once with isVisible(). isVisible() does not retry, so the check fails whenever applying the promotion takes longer than 30 ms. The only change since the baseline is commit ee3c750, which replaced the retrying toBeVisible() assertion with this fixed wait. The page snapshot taken at the failure shows the promotion was applied correctly, and the test passed on retry.",
+      "evidence": [
+        {
+          "observation": "O5",
+          "quote": "+  await page.waitForTimeout(30);",
+          "relevance": "The latest commit swapped the retrying web-first assertion for a fixed 30 ms sleep and a one-time isVisible() check.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "A short wait is enough for the promotion to apply, so the test no longer waits for the full assertion timeout.",
+          "relevance": "The only change since the baseline touches the test file alone. No application code changed, which rules out a regression.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "term [ref=e85]: Promotion (0D680D7C26E54805B8CA87DE)",
+          "relevance": "In the snapshot taken at the failure, the promotion line is on the page. The app applied the code, just later than 30 ms.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "definition [ref=e92]: CHF 44.63",
+          "relevance": "The discounted total matches the 4463 cents the test expects later, so the app produced the right result.",
+          "verified": true
+        },
+        {
+          "observation": "O1",
+          "quote": "Passed on retry in: chromium",
+          "relevance": "The failure is intermittent and depends on timing.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Revert the change in ee3c750 at tests/ui/booking.spec.ts:24-27. Remove `page.waitForTimeout(30)` and the `isVisible()` check, and go back to `await expect(page.getByText(`Promotion (${scenario.promotion.code})`)).toBeVisible();`. That assertion returns as soon as the text appears, so it adds no delay when the app is fast. Avoid fixed sleeps and one-time isVisible() checks in assertions; a lint rule such as playwright/no-wait-for-timeout can catch them.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/ui/booking.spec.ts:1-45",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "read_attachment chromium:0:error-context",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "diff_file tests/ui/booking.spec.ts",
+          "observation": "O5",
+          "error": null
+        }
+      ],
+      "toolCalls": 4,
+      "usage": {
+        "inputTokens": 8,
+        "outputTokens": 1195,
+        "cacheReadTokens": 11473,
+        "cacheWriteTokens": 9105,
+        "costUsd": 0.0717516
+      },
+      "durationMs": 15264
+    }
+  },
+  {
+    "caseId": "promotion-checked-after-fixed-wait",
+    "title": "Promotion checked after a fixed wait",
+    "expected": "flaky-test",
+    "repetition": 2,
+    "triage": {
+      "failureId": "tests/ui/booking.spec.ts:5 customer signs in, books a seat, and opens the issued QR ticket",
+      "cause": "flaky-test",
+      "confidence": "high",
+      "summary": "Commit ee3c750 swapped the retrying `await expect(...).toBeVisible()` for a fixed 30 ms `waitForTimeout` followed by a single `isVisible()` check. That check runs once and does not wait. When applying the promotion takes longer than 30 ms, the check returns false. The application did apply the promotion: the snapshot taken at the failure shows the promotion line and the discounted total, and the retry passed.",
+      "evidence": [
+        {
+          "observation": "O5",
+          "quote": "+  await page.waitForTimeout(30);",
+          "relevance": "The only change since the baseline replaced the waiting assertion with a fixed 30 ms sleep and a one-time isVisible() check.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "-  await expect(\n-    page.getByText(`Promotion (${scenario.promotion.code})`),\n-  ).toBeVisible();",
+          "relevance": "The baseline used Playwright's waiting assertion, and the test passed with it.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "A short wait is enough for the promotion to apply, so the test no longer waits for the full assertion timeout.",
+          "relevance": "The commit message says the change was made to speed up the test, which created a timing assumption.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "term [ref=e85]: Promotion (0D680D7C26E54805B8CA87DE)",
+          "relevance": "The promotion line was on the page when the failure snapshot was taken, so the app applied the code, just after the 30 ms window.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "definition [ref=e92]: CHF 44.63",
+          "relevance": "The discounted total matches the 4463 cents the test expects, so the app's discount is correct.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Revert the test change in ee3c750. Remove `page.waitForTimeout(30)` and restore `await expect(page.getByText(`Promotion (${scenario.promotion.code})`)).toBeVisible();`. This assertion finishes as soon as the text appears, so it is no slower when the app responds quickly. Also avoid using `isVisible()` with fixed sleeps in other UI tests.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/ui/booking.spec.ts:1-45",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "read_attachment chromium:0:error-context",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "diff_file tests/ui/booking.spec.ts",
+          "observation": "O5",
+          "error": null
+        }
+      ],
+      "toolCalls": 4,
+      "usage": {
+        "inputTokens": 8,
+        "outputTokens": 1224,
+        "cacheReadTokens": 14295,
+        "cacheWriteTokens": 6353,
+        "costUsd": 0.05913600000000001
+      },
+      "durationMs": 15374
+    }
+  },
+  {
+    "caseId": "promotion-checked-after-fixed-wait",
+    "title": "Promotion checked after a fixed wait",
+    "expected": "flaky-test",
+    "repetition": 3,
+    "triage": {
+      "failureId": "tests/ui/booking.spec.ts:5 customer signs in, books a seat, and opens the issued QR ticket",
+      "cause": "flaky-test",
+      "confidence": "high",
+      "summary": "The only change since the baseline is a test edit. It replaced a retrying assertion with a fixed `waitForTimeout(30)` followed by a one-time `isVisible()` check of the \"Promotion (code)\" line. When the promotion request takes longer than 30 ms, the check sees nothing and fails. But the page snapshot taken at the failure shows the promotion was applied with the correct discount, and the test passed on retry, so the application works.",
+      "evidence": [
+        {
+          "observation": "O2",
+          "quote": "await page.waitForTimeout(30);",
+          "relevance": "The test waits a fixed 30 ms instead of waiting for the UI to update.",
+          "verified": true
+        },
+        {
+          "observation": "O2",
+          "quote": "await page.getByText(`Promotion (${scenario.promotion.code})`).isVisible(),",
+          "relevance": "isVisible() checks once and does not retry, so a slightly slow response makes it return false.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "A short wait is enough for the promotion to apply, so the test no longer waits for the full assertion timeout.",
+          "relevance": "The only commit since the baseline changed just the test file. It swapped the auto-waiting assertion for the short fixed wait.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "term [ref=e85]: Promotion (0D680D7C26E54805B8CA87DE)",
+          "relevance": "By the time the snapshot was taken, the promotion line was on the page, so the app did apply the code.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "definition [ref=e92]: CHF 44.63",
+          "relevance": "The total is the expected 4463 cents, so the discount was calculated correctly.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Revert the change from commit ee3c750 in tests/ui/booking.spec.ts. Delete `page.waitForTimeout(30)` and use a retrying web-first assertion: `await expect(page.getByText(`Promotion (${scenario.promotion.code})`)).toBeVisible();`. Avoid fixed timeouts combined with `isVisible()` anywhere in the suite.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/ui/booking.spec.ts:1-45",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "read_attachment chromium:0:error-context",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O4",
+          "error": null
+        }
+      ],
+      "toolCalls": 3,
+      "usage": {
+        "inputTokens": 6,
+        "outputTokens": 1073,
+        "cacheReadTokens": 5664,
+        "cacheWriteTokens": 5798,
+        "costUsd": 0.0516068
+      },
+      "durationMs": 11125
+    }
+  },
+  {
+    "caseId": "promotion-limit-exceeded-under-concurrency",
+    "title": "Promotion limit exceeded by concurrent checkouts",
+    "expected": "product-defect",
+    "repetition": 1,
+    "triage": {
+      "failureId": "tests/api/checkout.spec.ts:117 promotion totals persist and the redemption limit cannot be exceeded",
+      "cause": "product-defect",
+      "confidence": "high",
+      "summary": "The test sends two checkouts at the same time for a promotion with redemptionLimit 1. Both returned 201, so the limit was exceeded. The only change since the baseline is commit 831925f, \"Tidy promotion redemption queries\". It changed the total-redemption count in validatePromotion from counting every order that is not failed or cancelled to counting only PAID orders. Checkout validates the promotion before the order is marked PAID, so an order still in checkout is no longer counted and a concurrent or later checkout can also redeem the code.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "Expected length: 1\nReceived length: 2",
+          "relevance": "Both concurrent checkouts were filtered as status 201, but only one should succeed. It failed the same way on both attempts.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "-        status: { notIn: [\"PAYMENT_FAILED\", \"CANCELLED\"] },\n+        status: \"PAID\",",
+          "relevance": "The only code change since the baseline. The total-redemption count now ignores orders that are still in checkout.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "Tidy promotion redemption queries",
+          "relevance": "The commit message describes a cleanup, not an intended change to how the limit is enforced.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "userId: input.userId,\n        status: { notIn: [\"PAYMENT_FAILED\", \"CANCELLED\"] },",
+          "relevance": "The per-customer count in the same function still counts orders in progress, so the new total-count rule is inconsistent with it.",
+          "verified": true
+        },
+        {
+          "observation": "O7",
+          "quote": "const claimed = await client.reservation.updateMany({",
+          "relevance": "In checkout, validatePromotion runs before the reservation is claimed and the order is created. The order only becomes PAID later (O8), so orders still in checkout are invisible to the new count.",
+          "verified": true
+        },
+        {
+          "observation": "O8",
+          "quote": "data: { status: \"PAID\", paidAt: now },",
+          "relevance": "PAID status and the promotionRedemption record are set only at the end of payment.",
+          "verified": true
+        },
+        {
+          "observation": "O9",
+          "quote": "tests/support/scenario.ts:162:      redemptionLimit: 1,",
+          "relevance": "The test scenario's promotion allows exactly one redemption.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Revert the total-redemption filter in src/modules/promotions/promotion-service.ts to `status: { notIn: [\"PAYMENT_FAILED\", \"CANCELLED\"] }`, matching the per-customer count, so orders still in checkout use up the limit. If counting only PAID orders was intended, the limit has to be enforced some other way, for example by locking the promotion row or reserving a redemption slot inside the checkout transaction. Keep the test as it is.",
+      "bugReport": {
+        "title": "Promotion redemption limit can be exceeded by concurrent checkouts",
+        "severity": "major",
+        "steps": [
+          "Create a promotion code with redemptionLimit = 1 (as in tests/support/scenario.ts).",
+          "As customer A, reserve a seat and apply the promotion; as customer B, reserve a different seat and apply the same promotion.",
+          "Send POST /api/v1/checkout for both reservations at the same time.",
+          "Check the response statuses and count the promotionRedemption rows for the code."
+        ],
+        "expected": "Exactly one checkout returns 201 and the other is rejected with 409/422 (\"This promotion has reached its redemption limit\"). Only one redemption is recorded.",
+        "actual": "Both checkouts return 201 Created, so the promotion is redeemed beyond its limit.",
+        "suspectedCause": "Commit 831925f changed validatePromotion (src/modules/promotions/promotion-service.ts:45-50) to count only orders with status \"PAID\" toward the total limit. Checkout (checkout-service.ts:248-314) validates the promotion and creates the order before it becomes PAID (line 465), so orders still in checkout are not counted and other checkouts get through. The old filter, `notIn: [\"PAYMENT_FAILED\", \"CANCELLED\"]`, counted those orders."
+      },
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/checkout.spec.ts:60-160",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "diff_file src/modules/promotions/promotion-service.ts",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/promotions/promotion-service.ts:1-120",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "search_code validatePromotion|promotionRedemption\\.create|FOR UPDATE",
+          "observation": "O6",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/orders/checkout-service.ts:200-320",
+          "observation": "O7",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/orders/checkout-service.ts:440-500",
+          "observation": "O8",
+          "error": null
+        },
+        {
+          "action": "search_code redemptionLimit",
+          "observation": "O9",
+          "error": null
+        }
+      ],
+      "toolCalls": 8,
+      "usage": {
+        "inputTokens": 16,
+        "outputTokens": 2478,
+        "cacheReadTokens": 46710,
+        "cacheWriteTokens": 12574,
+        "costUsd": 0.121836
+      },
+      "durationMs": 31076
+    }
+  },
+  {
+    "caseId": "promotion-limit-exceeded-under-concurrency",
+    "title": "Promotion limit exceeded by concurrent checkouts",
+    "expected": "product-defect",
+    "repetition": 2,
+    "triage": {
+      "failureId": "tests/api/checkout.spec.ts:117 promotion totals persist and the redemption limit cannot be exceeded",
+      "cause": "product-defect",
+      "confidence": "high",
+      "summary": "Two concurrent checkouts using a promotion with redemptionLimit 1 both returned 201, when exactly one should have. Commit 831925f, titled \"Tidy promotion redemption queries\", changed the total-redemption count in validatePromotion from \"all orders that are not failed or cancelled\" to `status: \"PAID\"`. Checkout creates the order as PENDING_PAYMENT before payment, so an order still being paid no longer counts toward the limit. The limit can therefore be exceeded.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "Expected length: 1\nReceived length: 2",
+          "relevance": "Both concurrent checkout responses had status 201, so both orders got the promotion even though the limit allows one.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "-        status: { notIn: [\"PAYMENT_FAILED\", \"CANCELLED\"] },\n+        status: \"PAID\",",
+          "relevance": "This is the only change since the baseline. It narrows the total-redemption count to PAID orders, which leaves out in-flight PENDING_PAYMENT orders.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "Tidy promotion redemption queries",
+          "relevance": "The commit message describes a tidy-up, not a deliberate change to how the redemption limit works.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "userId: input.userId,\n        status: { notIn: [\"PAYMENT_FAILED\", \"CANCELLED\"] },",
+          "relevance": "The per-customer count in the same function still uses the old rule, so the change was applied to only one of the two counts.",
+          "verified": true
+        },
+        {
+          "observation": "O6",
+          "quote": "\"status\" \"OrderStatus\" NOT NULL DEFAULT 'PENDING_PAYMENT'",
+          "relevance": "New orders start as PENDING_PAYMENT, so a PAID-only count misses orders that are still being checked out.",
+          "verified": true
+        },
+        {
+          "observation": "O6",
+          "quote": "redemptionLimit: 1,",
+          "relevance": "The test scenario sets the limit to 1, so only one checkout should succeed.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Revert the totalRedemptions filter in src/modules/promotions/promotion-service.ts to `status: { notIn: [\"PAYMENT_FAILED\", \"CANCELLED\"] }`, so that PENDING_PAYMENT orders count against redemptionLimit again, matching the per-customer count. Leave the test unchanged; its expectation is correct.",
+      "bugReport": {
+        "title": "Promotion redemptionLimit can be exceeded because pending orders are not counted",
+        "severity": "major",
+        "steps": [
+          "Create a promotion with redemptionLimit 1.",
+          "Have two different customers each reserve a seat and apply the promotion code to their reservation (POST /api/v1/reservations/{id}/promotion).",
+          "Send POST /api/v1/checkout for both reservations at the same time."
+        ],
+        "expected": "One checkout returns 201. The other is rejected with 409 or 422 ('This promotion has reached its redemption limit'), and only one promotion redemption is recorded.",
+        "actual": "Both checkouts return 201, so the promotion is redeemed twice despite redemptionLimit 1.",
+        "suspectedCause": "Commit 831925f changed validatePromotion (src/modules/promotions/promotion-service.ts, around line 48) to count only orders with status \"PAID\" toward the total redemption limit. Checkout (src/modules/orders/checkout-service.ts) creates the order in its default PENDING_PAYMENT status after validating, so an order that is still in checkout is not counted. A second checkout running at the same time passes validation. The previous filter (notIn PAYMENT_FAILED/CANCELLED) counted pending orders."
+      },
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/checkout.spec.ts:60-160",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "diff_file src/modules/promotions/promotion-service.ts",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/promotions/promotion-service.ts:1-140",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "search_code maxRedemptions|redemptionLimit|PENDING_PAYMENT|status: \"PENDING",
+          "observation": "O6",
+          "error": null
+        },
+        {
+          "action": "search_code validatePromotion\\(|FOR UPDATE|promotionRedemption\\.create",
+          "observation": "O7",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/orders/checkout-service.ts:220-300",
+          "observation": "O8",
+          "error": null
+        }
+      ],
+      "toolCalls": 7,
+      "usage": {
+        "inputTokens": 14,
+        "outputTokens": 2227,
+        "cacheReadTokens": 43787,
+        "cacheWriteTokens": 4315,
+        "costUsd": 0.0749284
+      },
+      "durationMs": 27368
+    }
+  },
+  {
+    "caseId": "promotion-limit-exceeded-under-concurrency",
+    "title": "Promotion limit exceeded by concurrent checkouts",
+    "expected": "product-defect",
+    "repetition": 3,
+    "triage": {
+      "failureId": "tests/api/checkout.spec.ts:117 promotion totals persist and the redemption limit cannot be exceeded",
+      "cause": "product-defect",
+      "confidence": "high",
+      "summary": "Two customers check out at the same time with a promotion whose redemption limit is 1, and both checkouts return 201. The test expects one 201 and one 409/422. The only commit since the baseline, \"Tidy promotion redemption queries\", changed the total-redemption count in validatePromotion from \"not PAYMENT_FAILED/CANCELLED\" to only \"PAID\". Checkout creates orders as PENDING_PAYMENT, so the second concurrent checkout no longer counts the first order and the limit is exceeded.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "Expected length: 1\nReceived length: 2",
+          "relevance": "Both concurrent checkouts got 201, so the promotion was redeemed twice.",
+          "verified": true
+        },
+        {
+          "observation": "O1",
+          "quote": "Passed on retry in: none",
+          "relevance": "It failed the same way on both attempts, which does not look like a flaky test.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "-        status: { notIn: [\"PAYMENT_FAILED\", \"CANCELLED\"] },\n+        status: \"PAID\",",
+          "relevance": "The only code change narrows the total-redemption count so it ignores orders that are still in progress.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "status: { notIn: [\"PAYMENT_FAILED\", \"CANCELLED\"] },",
+          "relevance": "The per-customer count in the same function still counts in-progress orders, so the rule the old code followed is still used elsewhere. The change is not a deliberate, consistent redesign.",
+          "verified": true
+        },
+        {
+          "observation": "O6",
+          "quote": "\"status\" \"OrderStatus\" NOT NULL DEFAULT 'PENDING_PAYMENT'",
+          "relevance": "New orders start as PENDING_PAYMENT, so a count of only PAID orders misses checkouts that are still in progress.",
+          "verified": true
+        },
+        {
+          "observation": "O6",
+          "quote": "tests/support/scenario.ts:162:      redemptionLimit: 1,",
+          "relevance": "The test promotion allows only one redemption.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Revert the total-redemption filter in src/modules/promotions/promotion-service.ts to `status: { notIn: [\"PAYMENT_FAILED\", \"CANCELLED\"] }`, so pending orders count against the limit, the same way the per-customer count does. Leave the test unchanged; its expectation is correct.",
+      "bugReport": {
+        "title": "Promotion redemption limit can be exceeded by concurrent checkouts",
+        "severity": "major",
+        "steps": [
+          "Create a promotion code with redemptionLimit = 1.",
+          "Have two different customers each reserve a seat for the event and apply the promotion to their reservation (both apply calls succeed with totalCents 4463).",
+          "Send POST /api/v1/checkout for both reservations at the same time."
+        ],
+        "expected": "Exactly one checkout returns 201. The other is rejected with 409/422 (\"This promotion has reached its redemption limit\"), and exactly one PromotionRedemption row exists.",
+        "actual": "Both checkouts return 201, so the promotion is redeemed beyond its limit.",
+        "suspectedCause": "Commit 831925f changed the totalRedemptions query in validatePromotion (src/modules/promotions/promotion-service.ts:45-50) to count only orders with status \"PAID\". Checkout (checkout-service.ts:248-275) validates the promotion and then creates the order with the default status PENDING_PAYMENT. A concurrent checkout therefore sees 0 PAID orders and also passes the limit check. The previous filter, notIn [PAYMENT_FAILED, CANCELLED], counted pending orders."
+      },
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/checkout.spec.ts:60-180",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "diff_file src/modules/promotions/promotion-service.ts",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/promotions/promotion-service.ts:1-120",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "search_code PENDING|maxRedemptions|redemptionLimit",
+          "observation": "O6",
+          "error": null
+        },
+        {
+          "action": "search_code validatePromotion|promotionRedemption|FOR UPDATE|Serializable",
+          "observation": "O7",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/orders/checkout-service.ts:225-300",
+          "observation": "O8",
+          "error": null
+        }
+      ],
+      "toolCalls": 7,
+      "usage": {
+        "inputTokens": 14,
+        "outputTokens": 2268,
+        "cacheReadTokens": 44017,
+        "cacheWriteTokens": 7802,
+        "costUsd": 0.0932294
+      },
+      "durationMs": 27341
+    }
+  },
+  {
+    "caseId": "random-seats-collide",
+    "title": "Random seats collide",
+    "expected": "flaky-test",
+    "repetition": 1,
+    "triage": {
+      "failureId": "tests/api/checkout.spec.ts:83 an idempotency key cannot be reused for a different reservation",
+      "cause": "flaky-test",
+      "confidence": "high",
+      "summary": "The test now picks both seat indices with two separate `randomInt(seats)` calls. Nothing stops both calls from returning the same index. When they do, the second `reserveSeat` asks for a seat the same test already holds, and the API correctly answers 409 INVENTORY_UNAVAILABLE. This is a bug in the test setup, not the app: on rerun the test passed 3 times and failed 3 times, and each failure was this seat collision.",
+      "evidence": [
+        {
+          "observation": "O6",
+          "quote": "-  const second = await reserveSeat(customer, scenario, 1);",
+          "relevance": "Before this change, the test always reserved two different seats (index 0, then index 1).",
+          "verified": true
+        },
+        {
+          "observation": "O2",
+          "quote": "const second = await reserveSeat(customer, scenario, randomInt(seats));",
+          "relevance": "The second seat index is drawn on its own and can match the first one.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "Pick random seats in the idempotency key test",
+          "relevance": "The only commit since the baseline changes just this test. No application code changed.",
+          "verified": true
+        },
+        {
+          "observation": "O8",
+          "quote": "Ran 6 times in api: 3 passed, 3 failed.",
+          "relevance": "The test fails intermittently, which fits a random collision between two seats rather than a real defect.",
+          "verified": true
+        },
+        {
+          "observation": "O1",
+          "quote": "Floor A-2 was just selected by someone else",
+          "relevance": "The 409 comes from the second reservation hitting a seat that is already held. That is the correct inventory behaviour.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Make the test always reserve two different seats. Either go back to fixed indices 0 and 1, or pick the first index at random and set the second to `(first + 1 + randomInt(seats - 1)) % seats`. You could also shuffle the seats and take the first two. No change to the application is needed.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/checkout.spec.ts:1-120",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "read_file tests/support/api.ts:1-40",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "search_code seatInventory|A-2",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "diff_file tests/api/checkout.spec.ts",
+          "observation": "O6",
+          "error": null
+        },
+        {
+          "action": "search_code assigned",
+          "observation": "O7",
+          "error": null
+        },
+        {
+          "action": "rerun_test api ×5",
+          "observation": "O8",
+          "error": null
+        },
+        {
+          "action": "read_file tests/support/scenario.ts:118-178",
+          "observation": "O9",
+          "error": null
+        }
+      ],
+      "toolCalls": 8,
+      "usage": {
+        "inputTokens": 12,
+        "outputTokens": 1517,
+        "cacheReadTokens": 30806,
+        "cacheWriteTokens": 12807,
+        "costUsd": 0.1005842
+      },
+      "durationMs": 21590
+    }
+  },
+  {
+    "caseId": "random-seats-collide",
+    "title": "Random seats collide",
+    "expected": "flaky-test",
+    "repetition": 2,
+    "triage": {
+      "failureId": "tests/api/checkout.spec.ts:83 an idempotency key cannot be reused for a different reservation",
+      "cause": "flaky-test",
+      "confidence": "high",
+      "summary": "Commit e1edcdc changed the test so it picks both seat indices with separate `randomInt(seats)` calls. Sometimes both calls return the same index. When that happens, the second `reserveSeat` asks for a seat the same customer already holds. The app correctly rejects it with 409 INVENTORY_UNAVAILABLE, so the test fails before it ever reaches the idempotency check. The failure is intermittent: in 6 reruns, 3 passed and 3 failed, on seat A-1 and seat A-2.",
+      "evidence": [
+        {
+          "observation": "O5",
+          "quote": "-  const second = await reserveSeat(customer, scenario, 1);",
+          "relevance": "Before this commit the two reservations always used different seats (index 0, the default, and index 1).",
+          "verified": true
+        },
+        {
+          "observation": "O2",
+          "quote": "const second = await reserveSeat(customer, scenario, randomInt(seats));",
+          "relevance": "Now both indices are drawn independently at random, so they can be the same.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "Pick random seats in the idempotency key test",
+          "relevance": "The only change since the baseline is to the test. No application code changed.",
+          "verified": true
+        },
+        {
+          "observation": "O1",
+          "quote": "Floor A-2 was just selected by someone else",
+          "relevance": "The failure happens in the second reserveSeat call, because the seat is already held by the first reservation, not in checkout.",
+          "verified": true
+        },
+        {
+          "observation": "O10",
+          "quote": "Ran 6 times in api: 3 passed, 3 failed.",
+          "relevance": "The test fails intermittently, and the failing seat changes from run to run (A-1, A-2), which fits a random collision.",
+          "verified": true
+        },
+        {
+          "observation": "O7",
+          "quote": "was just selected by someone else",
+          "relevance": "This message comes from reservation-service.ts:180. Refusing a seat that is already reserved is the documented anti-oversell behavior.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Make sure the test always uses two different seats. Either go back to fixed indices (0 and 1), or pick a random first index and set the second to `(first + 1 + randomInt(seats - 1)) % seats`. Another option is to shuffle the indices and take the first two. No change to the application is needed.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/checkout.spec.ts:1-120",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "read_file tests/support/api.ts:1-60",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "diff_file tests/api/checkout.spec.ts",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "search_code seatInventory|A-2",
+          "observation": "O6",
+          "error": null
+        },
+        {
+          "action": "search_code assigned|just selected by someone else",
+          "observation": "O7",
+          "error": null
+        },
+        {
+          "action": "read_attachment api:0:error-context",
+          "observation": "O8",
+          "error": null
+        },
+        {
+          "action": "read_file tests/support/scenario.ts:115-180",
+          "observation": "O9",
+          "error": null
+        },
+        {
+          "action": "rerun_test api ×5",
+          "observation": "O10",
+          "error": null
+        }
+      ],
+      "toolCalls": 9,
+      "usage": {
+        "inputTokens": 12,
+        "outputTokens": 1675,
+        "cacheReadTokens": 34293,
+        "cacheWriteTokens": 11006,
+        "costUsd": 0.0954366
+      },
+      "durationMs": 19787
+    }
+  },
+  {
+    "caseId": "random-seats-collide",
+    "title": "Random seats collide",
+    "expected": "flaky-test",
+    "repetition": 3,
+    "triage": {
+      "failureId": "tests/api/checkout.spec.ts:83 an idempotency key cannot be reused for a different reservation",
+      "cause": "flaky-test",
+      "confidence": "high",
+      "summary": "The last commit changed the test to pick each seat with its own `randomInt(seats)` call. The test scenario only has two assigned seats, so about half the time both reservations ask for the same seat. When that happens the second `reserveSeat` call correctly gets a 409 INVENTORY_UNAVAILABLE response. The app is doing the right thing here: the test is asking it to reserve a seat that is already held.",
+      "evidence": [
+        {
+          "observation": "O5",
+          "quote": "+  const second = await reserveSeat(customer, scenario, randomInt(seats));",
+          "relevance": "The only commit since the baseline replaced the fixed seat indexes (0 and 1) with two separate random picks, so the two picks can be the same seat.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "Pick random seats in the idempotency key test",
+          "relevance": "Only the test changed since the baseline. No application code changed.",
+          "verified": true
+        },
+        {
+          "observation": "O9",
+          "quote": "{ label: \"2\", sortOrder: 2, accessible: true },",
+          "relevance": "The scenario creates only two seats (A-1 and A-2), so the two random picks match about 50% of the time.",
+          "verified": true
+        },
+        {
+          "observation": "O1",
+          "quote": "Floor A-2 was just selected by someone else",
+          "relevance": "The failure is the second reservation being refused because the first reservation in the same test already holds that seat.",
+          "verified": true
+        },
+        {
+          "observation": "O10",
+          "quote": "Ran 6 times in api: 3 passed, 3 failed.",
+          "relevance": "Failing about half the time, sometimes on A-1 and sometimes on A-2, matches the chance of the two random picks colliding.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Make sure the test always reserves two different seats. The simplest fix is to go back to the fixed indexes 0 and 1. If you want to keep it random, pick the first index at random and set the second to `(first + 1) % seats`, or shuffle the seat list and take the first two. Do not change the reservation service: refusing to reserve a seat that is already held is correct.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/checkout.spec.ts:1-130",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "read_file tests/support/api.ts:1-60",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "diff_file tests/api/checkout.spec.ts",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "search_code seatInventory|A-2",
+          "observation": "O6",
+          "error": null
+        },
+        {
+          "action": "search_code assigned|seatCount|seats:",
+          "observation": "O7",
+          "error": null
+        },
+        {
+          "action": "read_attachment api:0:error-context",
+          "observation": "O8",
+          "error": null
+        },
+        {
+          "action": "read_file tests/support/scenario.ts:60-180",
+          "observation": "O9",
+          "error": null
+        },
+        {
+          "action": "rerun_test api ×5",
+          "observation": "O10",
+          "error": null
+        }
+      ],
+      "toolCalls": 9,
+      "usage": {
+        "inputTokens": 14,
+        "outputTokens": 1687,
+        "cacheReadTokens": 49694,
+        "cacheWriteTokens": 12231,
+        "costUsd": 0.10488979999999999
+      },
+      "durationMs": 37130
+    }
+  },
+  {
+    "caseId": "reservation-rate-limit-raised",
+    "title": "Reservation rate limit raised",
+    "expected": "outdated-test",
+    "repetition": 1,
+    "triage": {
+      "failureId": "tests/api/authorization.spec.ts:5 reservation rate limits reject excess requests without creating inventory holds",
+      "cause": "outdated-test",
+      "confidence": "high",
+      "summary": "The test sends 25 reservation requests and expects at least one 429. Commit 163fcb4 deliberately raised the reservation rate limit from 12 to 30 per minute, and docs/api.md was updated to match. So all 25 requests stay under the new limit and get 422 (an empty body fails validation). The test still assumes the old limit of 12.",
+      "evidence": [
+        {
+          "observation": "O2",
+          "quote": "for (let attempt = 0; attempt < 25; attempt++) {",
+          "relevance": "The test only sends 25 requests, which was over the old limit of 12 but is under the new limit of 30.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "Raise the reservation rate limit to 30 per minute",
+          "relevance": "The commit message describes the change as intentional and gives the reason (group bookers).",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "+      limit: 30,",
+          "relevance": "The route's rate limit went from 12 to 30 requests per 60 seconds.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "customers can create 30 reservations per minute",
+          "relevance": "The documentation was updated in the same commit, so the new limit is deliberate.",
+          "verified": true
+        },
+        {
+          "observation": "O1",
+          "quote": "Received array: [422, 422, 422, 422, 422, 422, 422, 422, 422, 422, …]",
+          "relevance": "Every request got past the rate limiter and was rejected by validation, which is what should happen under the higher limit.",
+          "verified": true
+        }
+      ],
+      "recommendation": "In tests/api/authorization.spec.ts, raise the loop count above the new limit (for example 35, or derive it from a shared constant set to limit + 5) so a 429 is reached. Keep the assertions that every status is 422 or 429 and that no reservations are created. Consider exporting the limit from the route or config so the test doesn't hard-code it.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/authorization.spec.ts:1-40",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "diff_file src/app/api/v1/reservations/route.ts",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "diff_file docs/api.md",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "search_code create-reservation|limit: 12",
+          "observation": "O6",
+          "error": null
+        }
+      ],
+      "toolCalls": 5,
+      "usage": {
+        "inputTokens": 10,
+        "outputTokens": 1119,
+        "cacheReadTokens": 11285,
+        "cacheWriteTokens": 4769,
+        "costUsd": 0.048521999999999996
+      },
+      "durationMs": 14077
+    }
+  },
+  {
+    "caseId": "reservation-rate-limit-raised",
+    "title": "Reservation rate limit raised",
+    "expected": "outdated-test",
+    "repetition": 2,
+    "triage": {
+      "failureId": "tests/api/authorization.spec.ts:5 reservation rate limits reject excess requests without creating inventory holds",
+      "cause": "outdated-test",
+      "confidence": "high",
+      "summary": "The test sends 25 empty POST /api/v1/reservations requests and expects at least one of them to get a 429. Commit 163fcb4 raised the reservation rate limit on purpose, from 12 to 30 requests per minute, so all 25 requests are now under the limit and every one returns 422 from validation. The application is working as intended. The test still assumes the old limit of 12.",
+      "evidence": [
+        {
+          "observation": "O2",
+          "quote": "for (let attempt = 0; attempt < 25; attempt++) {",
+          "relevance": "The test sends only 25 requests. That was above the old limit of 12 but is below the new limit of 30.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "+      limit: 30,",
+          "relevance": "The route's rate limit went from 12 to 30 per 60-second window.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "Group bookers reserve many seats in a row and hit the old limit of 12. docs/api.md documents the new limit.",
+          "relevance": "The commit message gives a reason for the change, so it was deliberate, not a regression.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "customers can create 30 reservations per minute",
+          "relevance": "The API documentation was updated to match the new limit.",
+          "verified": true
+        },
+        {
+          "observation": "O1",
+          "quote": "Received array: [422, 422, 422, 422, 422, 422, 422, 422, 422, 422, …]",
+          "relevance": "Every request was rejected by validation and none hit the rate limit, which is what you'd expect with 25 requests against a limit of 30.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Update tests/api/authorization.spec.ts:10 so it sends more requests than the limit, for example 35 (anything above 30). Better still, build the count from a shared constant for the reservation rate limit so the test follows future changes. Keep the 422/429 and zero-reservation assertions as they are.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/authorization.spec.ts:1-40",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "diff_file src/app/api/v1/reservations/route.ts",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "diff_file docs/api.md",
+          "observation": "O5",
+          "error": null
+        }
+      ],
+      "toolCalls": 4,
+      "usage": {
+        "inputTokens": 8,
+        "outputTokens": 1041,
+        "cacheReadTokens": 11285,
+        "cacheWriteTokens": 0,
+        "costUsd": 0.023108999999999998
+      },
+      "durationMs": 12749
+    }
+  },
+  {
+    "caseId": "reservation-rate-limit-raised",
+    "title": "Reservation rate limit raised",
+    "expected": "outdated-test",
+    "repetition": 3,
+    "triage": {
+      "failureId": "tests/api/authorization.spec.ts:5 reservation rate limits reject excess requests without creating inventory holds",
+      "cause": "outdated-test",
+      "confidence": "high",
+      "summary": "The test sends 25 reservation requests and expects at least one of them to get a 429. Commit 163fcb4 deliberately raised the reservation rate limit from 12 to 30 per minute, and docs/api.md was updated to match. With 25 requests the limit is never reached, so every response is a 422 for the empty body, and the test fails both times it runs.",
+      "evidence": [
+        {
+          "observation": "O2",
+          "quote": "for (let attempt = 0; attempt < 25; attempt++) {",
+          "relevance": "The test sends only 25 requests, fewer than the new limit.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "Raise the reservation rate limit to 30 per minute",
+          "relevance": "The commit message describes the change as intentional and explains why: group bookers kept hitting the old limit.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "+      limit: 30,",
+          "relevance": "The route now allows 30 requests per 60-second window.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "customers can create 30 reservations per minute",
+          "relevance": "The API documentation was updated to the new limit in the same commit.",
+          "verified": true
+        },
+        {
+          "observation": "O1",
+          "quote": "Received array: [422, 422, 422, 422, 422, 422, 422, 422, 422, 422, …]",
+          "relevance": "Every request failed validation and none reached the rate limit, which is what a 30-per-minute limit produces for 25 requests.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Update tests/api/authorization.spec.ts so it sends more requests than the new limit allows, for example 35. Better still, read the limit from one shared constant so the test and route.ts can't drift apart again. Keep the checks that every status is 422 or 429 and that no reservations are created.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/authorization.spec.ts:1-40",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "diff_file src/app/api/v1/reservations/route.ts",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "diff_file docs/api.md",
+          "observation": "O5",
+          "error": null
+        }
+      ],
+      "toolCalls": 4,
+      "usage": {
+        "inputTokens": 8,
+        "outputTokens": 978,
+        "cacheReadTokens": 11285,
+        "cacheWriteTokens": 0,
+        "costUsd": 0.021849
+      },
+      "durationMs": 12298
+    }
+  },
+  {
+    "caseId": "server-port-in-use",
+    "title": "Test server port already in use",
+    "expected": "environment-issue",
+    "repetition": 1,
+    "triage": {
+      "failureId": "setup-1",
+      "cause": "environment-issue",
+      "confidence": "high",
+      "summary": "Playwright stopped before any test ran. Its webServer step found something already answering at http://localhost:3100/api/v1/health/ready. The config sets reuseExistingServer: false, and the code has not changed since the baseline, so the cause is a leftover process on port 3100 (another test run, UI mode or a stale server). It is not a fault in the app or the tests.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "http://localhost:3100/api/v1/health/ready is already used, make sure that nothing is running on the port/url",
+          "relevance": "The run failed while starting the server because the port was already taken. No test code ran.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "reuseExistingServer: false,",
+          "relevance": "The config does not reuse a running server, so any process already on port 3100 stops the run.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "| Port 3100 already in use                    | Close the other test run or UI mode; Playwright does not reuse an existing server        |",
+          "relevance": "The project's testing docs list this exact symptom as a local-environment problem.",
+          "verified": true
+        },
+        {
+          "observation": "O2",
+          "quote": "Commits since f9313a6f879d5602105c25bac6540c4d756a8670:\nnone",
+          "relevance": "Nothing changed since the passing baseline, so a code regression or an outdated test is ruled out.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Stop whatever is using port 3100: another Playwright run, Playwright UI mode, or a leftover `next start --port 3100` process. Use `lsof -i :3100` to find it, or on CI make sure parallel jobs don't share one host port. Then rerun the suite. No code change is needed.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "list_changes",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "search_code reuseExistingServer|health/ready|3100",
+          "observation": "O3",
+          "error": null
+        }
+      ],
+      "toolCalls": 2,
+      "usage": {
+        "inputTokens": 6,
+        "outputTokens": 859,
+        "cacheReadTokens": 2375,
+        "cacheWriteTokens": 3185,
+        "costUsd": 0.033603999999999995
+      },
+      "durationMs": 9904
+    }
+  },
+  {
+    "caseId": "server-port-in-use",
+    "title": "Test server port already in use",
+    "expected": "environment-issue",
+    "repetition": 2,
+    "triage": {
+      "failureId": "setup-1",
+      "cause": "environment-issue",
+      "confidence": "high",
+      "summary": "The run stopped before any test ran. Playwright's webServer step found something already answering on http://localhost:3100/api/v1/health/ready, and the config sets reuseExistingServer: false, so it refused to start the app. No code changed since the baseline, so another process holding port 3100 on the machine caused the failure, not the code.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "http://localhost:3100/api/v1/health/ready is already used, make sure that nothing is running on the port/url",
+          "relevance": "The failure happened while starting the server, before any test ran, because the port was already taken.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "reuseExistingServer: false,",
+          "relevance": "The config tells Playwright to fail instead of reusing a server that is already running.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "| Port 3100 already in use                    | Close the other test run or UI mode; Playwright does not reuse an existing server        |",
+          "relevance": "The project docs list this exact symptom as a known environment problem caused by another test run or UI mode.",
+          "verified": true
+        },
+        {
+          "observation": "O2",
+          "quote": "Commits since f9313a6f879d5602105c25bac6540c4d756a8670:\nnone",
+          "relevance": "Nothing changed since the baseline, so no code regression or deliberate change is involved.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Find and stop whatever is holding port 3100 on the runner, for example another Playwright run, UI mode, or a leftover `next start` (`lsof -i :3100`). Then rerun the suite. If this keeps happening in CI, add a step that clears the port before the run, or stop overlapping jobs from sharing a runner.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "list_changes",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "search_code reuseExistingServer|3100|health/ready",
+          "observation": "O3",
+          "error": null
+        }
+      ],
+      "toolCalls": 2,
+      "usage": {
+        "inputTokens": 6,
+        "outputTokens": 844,
+        "cacheReadTokens": 4750,
+        "cacheWriteTokens": 796,
+        "costUsd": 0.021834
+      },
+      "durationMs": 9009
+    }
+  },
+  {
+    "caseId": "server-port-in-use",
+    "title": "Test server port already in use",
+    "expected": "environment-issue",
+    "repetition": 3,
+    "triage": {
+      "failureId": "setup-1",
+      "cause": "environment-issue",
+      "confidence": "high",
+      "summary": "The run stopped before any test ran. Playwright's webServer step found that http://localhost:3100/api/v1/health/ready was already answering, and the config sets reuseExistingServer to false, so it refused to start. Another process was already using port 3100, most likely a second test run or Playwright UI mode, which the docs say both need that port. No code changed since the baseline, so this is not a product or test regression.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "http://localhost:3100/api/v1/health/ready is already used, make sure that nothing is running on the port/url",
+          "relevance": "The failure happened at server startup because something was already on port 3100. No test assertion ran.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "reuseExistingServer: false,",
+          "relevance": "The config tells Playwright not to reuse a running server, so a busy port is a hard error.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "| Port 3100 already in use                    | Close the other test run or UI mode; Playwright does not reuse an existing server        |",
+          "relevance": "The project docs list this exact symptom as a known environment problem and give the fix.",
+          "verified": true
+        },
+        {
+          "observation": "O2",
+          "quote": "Changed files:\nnone",
+          "relevance": "Nothing changed since the passing baseline, which rules out a code regression or an outdated test.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Find and stop whatever is holding port 3100 on the runner, such as a leftover `next start`, another Playwright run or UI mode (for example with `lsof -i :3100`). Then rerun the suite. On shared CI agents, make sure earlier jobs' server processes are killed or that jobs run in isolation. Don't switch reuseExistingServer to true, because tests could then run against a stale build.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "list_changes",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "search_code reuseExistingServer|3100",
+          "observation": "O3",
+          "error": null
+        }
+      ],
+      "toolCalls": 2,
+      "usage": {
+        "inputTokens": 6,
+        "outputTokens": 855,
+        "cacheReadTokens": 4750,
+        "cacheWriteTokens": 654,
+        "costUsd": 0.021344000000000002
+      },
+      "durationMs": 9501
+    }
+  },
+  {
+    "caseId": "suspended-organizer-keeps-access",
+    "title": "Suspended organizer keeps dashboard access",
+    "expected": "product-defect",
+    "repetition": 1,
+    "triage": {
+      "failureId": "tests/api/authorization.spec.ts:116 suspended organizers lose access",
+      "cause": "product-defect",
+      "confidence": "high",
+      "summary": "After an administrator suspends an organizer, GET /api/v1/organizer/dashboard still returns 200 for that organizer when it should return 403. The only commit since the baseline (ed1d25c) removed the `status: \"ACTIVE\"` filter from `organizerForUser`, the shared check that every organizer-service operation calls. As a result, SUSPENDED and PENDING organizer profiles now pass the check. The commit was meant as a query-performance change, not a change to who gets access.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "Expected: 403\nReceived: 200",
+          "relevance": "The suspended organizer can still reach the organizer dashboard. This failed the same way on both attempts.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "The status filter kept the query from using the unique index on userId.",
+          "relevance": "The commit gives a performance reason for the change. It says nothing about letting suspended organizers keep access.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "-    where: { userId, status: \"ACTIVE\" },\n+    where: { userId },",
+          "relevance": "This removes the active-status check, so any organizer profile now passes, whatever its status.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "src/modules/events/organizer-service.ts:281:  const organizer = await organizerForUser(userId);",
+          "relevance": "organizerForUser is the shared guard called by many organizer operations, so the regression affects all of them.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Put the status check back in organizerForUser. To keep the unique-index lookup, use `findUnique({ where: { userId } })` and then throw forbidden if `organizer.status !== \"ACTIVE\"`. Then rerun tests/api/authorization.spec.ts.",
+      "bugReport": {
+        "title": "Suspended (and pending) organizers keep access to organizer APIs",
+        "severity": "critical",
+        "steps": [
+          "Sign in as an organizer whose profile is ACTIVE.",
+          "As an administrator, PATCH /api/v1/admin/organizers/{organizerId}/status with {\"status\":\"SUSPENDED\"}. The response is 200.",
+          "In the organizer's existing session, GET /api/v1/organizer/dashboard."
+        ],
+        "expected": "403 Forbidden, because only active organizers may use organizer endpoints.",
+        "actual": "200 OK. The suspended organizer can still use the organizer dashboard.",
+        "suspectedCause": "Commit ed1d25c changed organizerForUser in src/modules/events/organizer-service.ts from `where: { userId, status: \"ACTIVE\" }` to `where: { userId }`. It also changed the error message from 'An active organizer profile is required' to 'An organizer profile is required'. Every organizer operation calls this function, so the status gate is gone. Fix it by fetching the profile by userId (findUnique, which uses the index) and rejecting any status other than ACTIVE."
+      },
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/authorization.spec.ts:1-140",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "diff_file src/modules/events/organizer-service.ts",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "search_code SUSPENDED|status: \"ACTIVE\"|organizerForUser\\(",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/events/organizer-service.ts:264-300",
+          "observation": "O6",
+          "error": null
+        }
+      ],
+      "toolCalls": 5,
+      "usage": {
+        "inputTokens": 12,
+        "outputTokens": 1616,
+        "cacheReadTokens": 20596,
+        "cacheWriteTokens": 7749,
+        "costUsd": 0.0752322
+      },
+      "durationMs": 20239
+    }
+  },
+  {
+    "caseId": "suspended-organizer-keeps-access",
+    "title": "Suspended organizer keeps dashboard access",
+    "expected": "product-defect",
+    "repetition": 2,
+    "triage": {
+      "failureId": "tests/api/authorization.spec.ts:116 suspended organizers lose access",
+      "cause": "product-defect",
+      "confidence": "high",
+      "summary": "After an administrator suspends an organizer, GET /api/v1/organizer/dashboard still returns 200 for that organizer when it should return 403. Commit ed1d25c took the `status: \"ACTIVE\"` filter out of organizerForUser to speed up the query, so suspended (and pending) organizer profiles now pass the check. The docs and earlier defect notes say organizer access requires an active profile, so the commit is a regression and not a deliberate behavior change.",
+      "evidence": [
+        {
+          "observation": "O4",
+          "quote": "-    where: { userId, status: \"ACTIVE\" },\n+    where: { userId },",
+          "relevance": "The only code change since the baseline removes the active-status requirement from the organizer lookup.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "The status filter kept the query from using the unique index on userId.",
+          "relevance": "The commit was meant as a query performance fix. It does not say it changes access rules on purpose.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "organizer resources are scoped through the active organizer profile",
+          "relevance": "The API docs still require an active organizer profile.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "Suspended organizers could still review refunds                                              | Require the owning organizer profile to be active",
+          "relevance": "This same problem was fixed before by requiring an active profile, so the test's expectation is correct.",
+          "verified": true
+        },
+        {
+          "observation": "O1",
+          "quote": "Expected: 403\n  Received: 200",
+          "relevance": "The suspended organizer still gets into the dashboard, and this happened on both attempts.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Put the active-status check back in organizerForUser. To keep the unique-index lookup, use findUnique({ where: { userId } }) and then throw forbidden if organizer.status !== \"ACTIVE\". All ~10 organizer-service entry points call this function, so suspended organizers currently get through all of them. Re-run tests/api/authorization.spec.ts after the fix.",
+      "bugReport": {
+        "title": "Suspended organizers keep access to organizer endpoints (dashboard returns 200)",
+        "severity": "critical",
+        "steps": [
+          "Sign in as an organizer user and keep the session.",
+          "As an administrator, PATCH /api/v1/admin/organizers/{organizerId}/status with {\"status\":\"SUSPENDED\"} and confirm the response is 2xx.",
+          "Using the organizer's existing session, GET /api/v1/organizer/dashboard."
+        ],
+        "expected": "403 Forbidden, because organizer resources need an active organizer profile.",
+        "actual": "200 OK. The suspended organizer can still use the dashboard.",
+        "suspectedCause": "In src/modules/events/organizer-service.ts, organizerForUser (line ~267) no longer filters on status: \"ACTIVE\". Commit ed1d25c removed the filter to use the userId unique index, so any profile matches, including SUSPENDED or PENDING ones. Every organizer-service function that calls organizerForUser is affected."
+      },
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/authorization.spec.ts:1-135",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "diff_file src/modules/events/organizer-service.ts",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "search_code organizerForUser|active organizer|SUSPENDED",
+          "observation": "O5",
+          "error": null
+        }
+      ],
+      "toolCalls": 4,
+      "usage": {
+        "inputTokens": 10,
+        "outputTokens": 1449,
+        "cacheReadTokens": 16285,
+        "cacheWriteTokens": 3932,
+        "costUsd": 0.051937
+      },
+      "durationMs": 18267
+    }
+  },
+  {
+    "caseId": "suspended-organizer-keeps-access",
+    "title": "Suspended organizer keeps dashboard access",
+    "expected": "product-defect",
+    "repetition": 3,
+    "triage": {
+      "failureId": "tests/api/authorization.spec.ts:116 suspended organizers lose access",
+      "cause": "product-defect",
+      "confidence": "high",
+      "summary": "After an administrator suspends an organizer, GET /api/v1/organizer/dashboard returns 200 for that organizer when it should return 403. The only commit since the baseline (ed1d25c) took `status: \"ACTIVE\"` out of the query in `organizerForUser`. That query was the check that blocked suspended and pending organizers, so it now returns any organizer profile whatever its status. The commit message describes a query-performance change, not a decision to let suspended organizers keep access.",
+      "evidence": [
+        {
+          "observation": "O4",
+          "quote": "-    where: { userId, status: \"ACTIVE\" },\n+    where: { userId },",
+          "relevance": "This change removes the active-status filter, which was the only thing stopping a non-active organizer profile from being returned.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "-    throw forbidden(\"An active organizer profile is required\");",
+          "relevance": "The old error message shows that requiring an active profile was the intended authorization rule.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "The status filter kept the query from using the unique index on userId.",
+          "relevance": "The commit was meant as a performance fix. Nothing says suspended organizers should keep access.",
+          "verified": true
+        },
+        {
+          "observation": "O8",
+          "quote": "src/modules/events/organizer-service.ts:755:export async function getOrganizerDashboard(userId: string) {",
+          "relevance": "The dashboard endpoint the test calls is defined in this file. O5 shows it calls organizerForUser on line 756.",
+          "verified": true
+        },
+        {
+          "observation": "O1",
+          "quote": "Expected: 403\n  Received: 200",
+          "relevance": "A suspended organizer still gets the dashboard. The test failed the same way on both attempts, which points to a deterministic regression rather than flakiness.",
+          "verified": true
+        }
+      ],
+      "recommendation": "Put the status check back. Either restore `status: \"ACTIVE\"` in the `organizerForUser` query, or keep the faster lookup by unique `userId` and then throw forbidden when `organizer.status !== \"ACTIVE\"`. The second option keeps the index benefit and still enforces the rule. Every organizer operation that uses this helper is affected (venues, events, orders, promotions, dashboard), so a fix here covers all of them.",
+      "bugReport": {
+        "title": "Suspended (and pending) organizers keep full access to organizer APIs",
+        "severity": "critical",
+        "steps": [
+          "Sign in as an organizer whose profile is ACTIVE.",
+          "As an administrator, PATCH /api/v1/admin/organizers/{organizerId}/status with body {\"status\":\"SUSPENDED\"}. It returns 200.",
+          "Using the organizer's existing session, GET /api/v1/organizer/dashboard."
+        ],
+        "expected": "403 Forbidden. An active organizer profile is required.",
+        "actual": "200 OK, and the dashboard data is returned to the suspended organizer.",
+        "suspectedCause": "Commit ed1d25c changed `organizerForUser` in src/modules/events/organizer-service.ts from `findFirst({ where: { userId, status: \"ACTIVE\" } })` to `findFirst({ where: { userId } })`, and nothing else checks the status. Every organizer operation that calls this helper, including getOrganizerDashboard, createVenue, listOrganizerOrders and listOrganizerPromotions, now accepts SUSPENDED and PENDING profiles."
+      },
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/authorization.spec.ts:1-140",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "diff_file src/modules/events/organizer-service.ts",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "search_code organizerForUser|status === \"ACTIVE\"|SUSPENDED",
+          "observation": "O5",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/events/organizer-service.ts:264-310",
+          "observation": "O6",
+          "error": null
+        },
+        {
+          "action": "read_file src/modules/events/organizer-service.ts:798-828",
+          "observation": "O7",
+          "error": null
+        },
+        {
+          "action": "search_code export async function (getOrganizerDashboard|organizerDashboard)|organizer/dashboard",
+          "observation": "O8",
+          "error": null
+        }
+      ],
+      "toolCalls": 7,
+      "usage": {
+        "inputTokens": 16,
+        "outputTokens": 2024,
+        "cacheReadTokens": 40725,
+        "cacheWriteTokens": 2837,
+        "costUsd": 0.062874
+      },
+      "durationMs": 28589
+    }
+  },
+  {
+    "caseId": "validation-error-code-renamed",
+    "title": "Validation error code renamed",
+    "expected": "outdated-test",
+    "repetition": 1,
+    "triage": {
+      "failureId": "tests/api/catalog.spec.ts:52 malformed and invalid requests return structured errors",
+      "cause": "outdated-test",
+      "confidence": "high",
+      "summary": "The test expects GET /api/v1/events?pageSize=1000 to return error code VALIDATION_ERROR. It gets INVALID_REQUEST instead. Commit 38f9ae8 renamed this code on purpose and applied the new name across the error types, the response helpers, the services and docs/api.md. The test is now the only place that still uses the old code. The status (422) and the requestId checks before the failing assertion behave as the test expects; only the code name differs.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "+   \"code\": \"INVALID_REQUEST\",",
+          "relevance": "The API returns the renamed code. Everything else in the error object matches what the test expects.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "Rename the VALIDATION_ERROR code to INVALID_REQUEST",
+          "relevance": "The commit message says the rename was deliberate, to follow the public API guidelines.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "+    \"code\": \"INVALID_REQUEST\",",
+          "relevance": "The API documentation was updated to the new code, so the contract changed on purpose.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "tests/api/catalog.spec.ts:65:    code: \"VALIDATION_ERROR\",",
+          "relevance": "The test is the only remaining reference to the old code.",
+          "verified": true
+        }
+      ],
+      "recommendation": "In tests/api/catalog.spec.ts line 65, change the expected code from \"VALIDATION_ERROR\" to \"INVALID_REQUEST\" to match the renamed code in src/shared/http/api-response.ts and docs/api.md.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/catalog.spec.ts:40-80",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "search_code VALIDATION_ERROR|INVALID_REQUEST",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "diff_file docs/api.md",
+          "observation": "O5",
+          "error": null
+        }
+      ],
+      "toolCalls": 4,
+      "usage": {
+        "inputTokens": 8,
+        "outputTokens": 979,
+        "cacheReadTokens": 7301,
+        "cacheWriteTokens": 4723,
+        "costUsd": 0.044687199999999996
+      },
+      "durationMs": 11644
+    }
+  },
+  {
+    "caseId": "validation-error-code-renamed",
+    "title": "Validation error code renamed",
+    "expected": "outdated-test",
+    "repetition": 2,
+    "triage": {
+      "failureId": "tests/api/catalog.spec.ts:52 malformed and invalid requests return structured errors",
+      "cause": "outdated-test",
+      "confidence": "high",
+      "summary": "The test expects GET /api/v1/events?pageSize=1000 to return error code VALIDATION_ERROR. Commit 38f9ae8 renamed that code to INVALID_REQUEST on purpose, in the error type, the response helper, the services and docs/api.md. The API now returns INVALID_REQUEST with status 422, as intended, and the failure came back the same way on both attempts.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "+   \"code\": \"INVALID_REQUEST\",",
+          "relevance": "The API returned the new code. The assertion on status 422 passed before the code check failed.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "Rename the VALIDATION_ERROR code to INVALID_REQUEST",
+          "relevance": "The commit message states the rename was deliberate and gives the public API guidelines as the reason.",
+          "verified": true
+        },
+        {
+          "observation": "O5",
+          "quote": "+    \"code\": \"INVALID_REQUEST\",",
+          "relevance": "The API documentation was updated in the same commit, so the change is intended and documented.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "tests/api/catalog.spec.ts:65:    code: \"VALIDATION_ERROR\",",
+          "relevance": "The test is the only remaining reference to the old code anywhere in the repository.",
+          "verified": true
+        }
+      ],
+      "recommendation": "In tests/api/catalog.spec.ts line 65, change the expected code from \"VALIDATION_ERROR\" to \"INVALID_REQUEST\". Leave the status and requestId assertions as they are.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/catalog.spec.ts:40-80",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "search_code VALIDATION_ERROR|INVALID_REQUEST",
+          "observation": "O4",
+          "error": null
+        },
+        {
+          "action": "diff_file docs/api.md",
+          "observation": "O5",
+          "error": null
+        }
+      ],
+      "toolCalls": 4,
+      "usage": {
+        "inputTokens": 8,
+        "outputTokens": 970,
+        "cacheReadTokens": 11753,
+        "cacheWriteTokens": 285,
+        "costUsd": 0.023207600000000002
+      },
+      "durationMs": 10896
+    }
+  },
+  {
+    "caseId": "validation-error-code-renamed",
+    "title": "Validation error code renamed",
+    "expected": "outdated-test",
+    "repetition": 3,
+    "triage": {
+      "failureId": "tests/api/catalog.spec.ts:52 malformed and invalid requests return structured errors",
+      "cause": "outdated-test",
+      "confidence": "high",
+      "summary": "GET /api/v1/events?pageSize=1000 still returns 422 with a requestId, but the error code is now \"INVALID_REQUEST\" and the test expects \"VALIDATION_ERROR\". Commit 38f9ae8 renamed the code on purpose. It changed every use in the source and in docs/api.md but left this test unchanged.",
+      "evidence": [
+        {
+          "observation": "O1",
+          "quote": "+   \"code\": \"INVALID_REQUEST\",",
+          "relevance": "The API returns the new code. The status check (422) passed before this assertion ran.",
+          "verified": true
+        },
+        {
+          "observation": "O3",
+          "quote": "Rename the VALIDATION_ERROR code to INVALID_REQUEST",
+          "relevance": "The commit message describes a deliberate rename to match the public API guidelines, and says docs/api.md shows the new code.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "tests/api/catalog.spec.ts:65:    code: \"VALIDATION_ERROR\",",
+          "relevance": "This test is the only remaining reference to the old code. The source and the docs all use INVALID_REQUEST.",
+          "verified": true
+        },
+        {
+          "observation": "O4",
+          "quote": "docs/api.md:31:    \"code\": \"INVALID_REQUEST\",",
+          "relevance": "The documented contract matches what the app now returns.",
+          "verified": true
+        }
+      ],
+      "recommendation": "In tests/api/catalog.spec.ts at line 65, change the expected code from \"VALIDATION_ERROR\" to \"INVALID_REQUEST\". Also, if outside clients depended on the old code, tell them about the rename in the changelog.",
+      "bugReport": null,
+      "termination": "verdict",
+      "steps": [
+        {
+          "action": "read_file tests/api/catalog.spec.ts:40-80",
+          "observation": "O2",
+          "error": null
+        },
+        {
+          "action": "list_changes",
+          "observation": "O3",
+          "error": null
+        },
+        {
+          "action": "search_code VALIDATION_ERROR|INVALID_REQUEST",
+          "observation": "O4",
+          "error": null
+        }
+      ],
+      "toolCalls": 3,
+      "usage": {
+        "inputTokens": 6,
+        "outputTokens": 922,
+        "cacheReadTokens": 7301,
+        "cacheWriteTokens": 0,
+        "costUsd": 0.0199242
+      },
+      "durationMs": 10574
+    }
+  }
+]

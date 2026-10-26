@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
+import { git } from "../shared/git.ts";
 import { temporaryRepository } from "../testing/git-repository.ts";
 import type { TemporaryRepository } from "../testing/git-repository.ts";
 import { Repository } from "./repository.ts";
@@ -97,5 +98,20 @@ describe("Repository", () => {
     expect(await new Repository(fixture.root).history()).toMatch(
       /No baseline revision/,
     );
+  });
+
+  it("does not execute external diff commands configured by the repository", async () => {
+    await git(fixture.root, [
+      "config",
+      "diff.external",
+      "aita-external-diff-must-not-run",
+    ]);
+    try {
+      const repository = new Repository(fixture.root, baseline);
+      expect(await repository.diff("src/checkout.ts")).toContain("return 0;");
+      expect(await repository.history()).toContain("src/checkout.ts");
+    } finally {
+      await git(fixture.root, ["config", "--unset", "diff.external"]);
+    }
   });
 });

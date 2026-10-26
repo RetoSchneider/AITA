@@ -6,34 +6,34 @@ import type { Verdict } from "../domain/triage.ts";
 import type { ObservationLog } from "./observations.ts";
 import { toInputSchema } from "./schema.ts";
 
+const requiredText = z.string().trim().min(1);
+
 export const verdictSchema = z.object({
   cause: z.enum(causes),
   confidence: z.enum(confidences),
-  summary: z
-    .string()
-    .describe(
-      "Two or three sentences on what failed and why, for a developer.",
-    ),
+  summary: requiredText.describe(
+    "Two or three sentences on what failed and why, for a developer.",
+  ),
   evidence: z.array(
     z.object({
-      observation: z.string().describe("Observation id, such as O3."),
-      quote: z
-        .string()
-        .describe("Short passage copied exactly from that observation."),
-      relevance: z.string().describe("What this passage shows."),
+      observation: requiredText.describe("Observation id, such as O3."),
+      quote: requiredText.describe(
+        "Short passage copied exactly from that observation.",
+      ),
+      relevance: requiredText.describe("What this passage shows."),
     }),
   ),
-  recommendation: z.string().describe("The next step for the team."),
+  recommendation: requiredText.describe("The next step for the team."),
   bugReport: z
     .object({
-      title: z.string(),
+      title: requiredText,
       severity: z.enum(severities),
-      steps: z.array(z.string()).describe("Steps to reproduce."),
-      expected: z.string(),
-      actual: z.string(),
-      suspectedCause: z
-        .string()
-        .describe("Where in the code the defect most likely is, and why."),
+      steps: z.array(requiredText).min(1).describe("Steps to reproduce."),
+      expected: requiredText,
+      actual: requiredText,
+      suspectedCause: requiredText.describe(
+        "Where in the code the defect most likely is, and why.",
+      ),
     })
     .nullable()
     .describe("Required for a product-defect, null for every other cause."),
@@ -52,6 +52,7 @@ export const verdictTool: BetaTool = {
 export interface VerdictReview {
   verdict: Verdict;
   problems: string[];
+  complete: boolean;
 }
 
 export function reviewVerdict(
@@ -66,7 +67,7 @@ export function reviewVerdict(
     item.verified
       ? []
       : [
-          `Evidence ${index + 1} does not appear in ${item.observation}. Copy the quote exactly from that observation.`,
+          `Evidence ${index + 1} is not a verifiable quote from ${item.observation}. Copy the quote exactly from a text observation.`,
         ],
   );
   const missingEvidence =
@@ -84,5 +85,6 @@ export function reviewVerdict(
       bugReport: input.cause === "product-defect" ? input.bugReport : null,
     },
     problems: [...unverified, ...missingEvidence, ...missingReport],
+    complete: missingEvidence.length === 0 && missingReport.length === 0,
   };
 }

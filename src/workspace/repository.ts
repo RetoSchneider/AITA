@@ -87,6 +87,8 @@ export class Repository {
     ]);
     const files = await git(this.root, [
       "diff",
+      "--no-ext-diff",
+      "--no-textconv",
       "--stat=160",
       `${this.baseline}...HEAD`,
     ]);
@@ -103,6 +105,8 @@ export class Repository {
     if (this.baseline === undefined) return noBaseline;
     const output = await git(this.root, [
       "diff",
+      "--no-ext-diff",
+      "--no-textconv",
       `${this.baseline}...HEAD`,
       "--",
       file,

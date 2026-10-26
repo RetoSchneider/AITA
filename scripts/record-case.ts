@@ -1,5 +1,13 @@
 import { execFile, spawn } from "node:child_process";
-import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import {
+  cp,
+  mkdir,
+  mkdtemp,
+  readFile,
+  realpath,
+  rm,
+  writeFile,
+} from "node:fs/promises";
 import { createServer } from "node:http";
 import type { Server } from "node:http";
 import { homedir, tmpdir } from "node:os";
@@ -8,16 +16,15 @@ import { parseArgs, promisify } from "node:util";
 
 import { z } from "zod";
 
+import type { Failure } from "../src/domain/failure.ts";
 import { exists, loadCases, loadSuite } from "../src/evaluation/cases.ts";
 import type { EvaluationCase } from "../src/evaluation/cases.ts";
-import {
-  collectFailures,
-  countResults,
-  reportSchema,
-} from "../src/playwright/report.ts";
+import { collectFailures, reportSchema } from "../src/playwright/report.ts";
 import type { RerunOutcome } from "../src/playwright/runner.ts";
+import { rerunOutcome, testFilePattern } from "../src/playwright/runner.ts";
 import { git } from "../src/shared/git.ts";
 import { toPosix } from "../src/shared/text.ts";
+import { resolveInside } from "../src/workspace/paths.ts";
 
 const execFileAsync = promisify(execFile);
 
@@ -29,7 +36,7 @@ const recordingSchema = z.object({
   test: z.string(),
   projects: z.array(z.string()).default([]),
   stop: z.array(z.string()).default([]),
-  occupyPort: z.number().int().optional(),
+  occupyPort: z.number().int().min(1).max(65535).optional(),
   env: z.record(z.string(), z.string()).default({}),
   reruns: z.number().int().nonnegative().default(0),
   attempts: z.number().int().positive().default(1),
@@ -89,10 +96,16 @@ async function capture(
       ],
       recording.env,
     );
-    const [failure] = collectFailures(reportSchema.parse(report));
+    const failures = collectFailures(reportSchema.parse(report));
+    const [failure] = failures;
     if (failure === undefined) {
       log(`Attempt ${attempt}: no failure`);
       continue;
+    }
+    if (failures.length !== 1) {
+      throw new Error(
+        `${testCase.id} produced ${failures.length} failures; each evaluation case must record exactly one`,
+      );
     }
     log(
       `Attempt ${attempt}: ${failure.title} failed in [${failure.failedIn.join(", ")}], passed on retry in [${failure.flakyIn.join(", ")}]`,
@@ -111,9 +124,7 @@ async function capture(
     if (recording.reruns > 0 && failure.kind === "test") {
       const outcomes: RerunOutcome[] = [];
       for (const project of [...failure.failedIn, ...failure.flakyIn]) {
-        outcomes.push(
-          await rerun(workspace, failure.location, project, recording),
-        );
+        outcomes.push(await rerun(workspace, failure, project, recording));
       }
       await writeFile(
         testCase.reruns,
@@ -141,6 +152,12 @@ async function prepareWorkspace(
   workspace: string,
   revision: string,
 ): Promise<void> {
+  const sourceRoot = await realpath(source);
+  if (path.resolve(workspace) === sourceRoot) {
+    throw new Error(
+      "The recording workspace must be separate from the source repository",
+    );
+  }
   if (!(await exists(workspace))) {
     await mkdir(path.dirname(workspace), { recursive: true });
     await git(path.dirname(workspace), [
@@ -151,6 +168,21 @@ async function prepareWorkspace(
       source,
       workspace,
     ]);
+  }
+  const workspaceRoot = await realpath(workspace);
+  const checkoutRoot = await realpath(
+    (await git(workspace, ["rev-parse", "--show-toplevel"])).trim(),
+  );
+  const origin = (await git(workspace, ["remote", "get-url", "origin"])).trim();
+  if (
+    workspaceRoot === sourceRoot ||
+    workspaceRoot !== checkoutRoot ||
+    !(await exists(origin)) ||
+    (await realpath(origin)) !== sourceRoot
+  ) {
+    throw new Error(
+      "The recording workspace must be a dedicated clone of the selected source repository",
+    );
   }
   await git(workspace, [
     "checkout",
@@ -214,14 +246,14 @@ async function withEnvironment<Result>(
     recording.occupyPort === undefined
       ? undefined
       : await occupy(recording.occupyPort);
-  if (services.length > 0) {
-    await run(
-      "docker",
-      ["compose", "-f", "compose.test.yaml", "stop", ...services],
-      workspace,
-    );
-  }
   try {
+    if (services.length > 0) {
+      await run(
+        "docker",
+        ["compose", "-f", "compose.test.yaml", "stop", ...services],
+        workspace,
+      );
+    }
     return await task();
   } finally {
     blocker?.close();
@@ -234,47 +266,58 @@ async function runPlaywright(
   args: string[],
   env: Record<string, string>,
 ): Promise<unknown> {
-  const output = path.join(tmpdir(), `aita-recording-${Date.now()}.json`);
-  await new Promise<void>((resolve) => {
-    const child = spawn(
-      process.execPath,
-      [
-        path.join("node_modules", "@playwright", "test", "cli.js"),
-        "test",
-        ...args,
-        "--reporter",
-        "json",
-      ],
-      {
-        cwd: workspace,
-        env: {
-          ...process.env,
-          ...Object.fromEntries(
-            Object.entries(env).map(([name, value]) => [
-              name,
-              value.replaceAll("{workspace}", workspace),
-            ]),
-          ),
-          CI: "1",
-          PLAYWRIGHT_JSON_OUTPUT_NAME: output,
-        },
-        stdio: "inherit",
-      },
-    );
-    child.on("close", () => {
-      resolve();
-    });
-  });
+  const directory = await mkdtemp(path.join(tmpdir(), "aita-recording-"));
+  const output = path.join(directory, "report.json");
   try {
+    await new Promise<void>((resolve, reject) => {
+      const child = spawn(
+        process.execPath,
+        [
+          path.join("node_modules", "@playwright", "test", "cli.js"),
+          "test",
+          ...args,
+          "--reporter",
+          "json",
+        ],
+        {
+          cwd: workspace,
+          env: {
+            ...process.env,
+            ...Object.fromEntries(
+              Object.entries(env).map(([name, value]) => [
+                name,
+                value.replaceAll("{workspace}", workspace),
+              ]),
+            ),
+            CI: "1",
+            PLAYWRIGHT_JSON_OUTPUT_FILE: output,
+          },
+          stdio: "inherit",
+          timeout: 20 * 60 * 1000,
+        },
+      );
+      child.once("error", reject);
+      child.once("close", (code, signal) => {
+        if (signal !== null || (code !== 0 && code !== 1)) {
+          reject(
+            new Error(
+              `Playwright could not complete: ${signal ?? String(code)}`,
+            ),
+          );
+        } else {
+          resolve();
+        }
+      });
+    });
     return JSON.parse(await readFile(output, "utf8"));
   } finally {
-    await rm(output, { force: true });
+    await rm(directory, { recursive: true, force: true });
   }
 }
 
 async function rerun(
   workspace: string,
-  location: { file: string; line: number },
+  failure: Failure,
   project: string,
   recording: Recording,
 ): Promise<RerunOutcome> {
@@ -282,7 +325,7 @@ async function rerun(
   const report = await runPlaywright(
     workspace,
     [
-      `${location.file}:${location.line}`,
+      `${testFilePattern(workspace, failure.location.file)}:${failure.location.line}`,
       "--project",
       project,
       "--repeat-each",
@@ -292,8 +335,8 @@ async function rerun(
     ],
     recording.env,
   );
-  const counts = countResults(reportSchema.parse(sanitize(report, workspace)));
-  return { project, runs: counts.passed + counts.failed, ...counts };
+  const parsed = reportSchema.parse(sanitize(report, workspace));
+  return rerunOutcome(parsed, failure, project);
 }
 
 async function copyAttachments(
@@ -304,9 +347,21 @@ async function copyAttachments(
   const failures = collectFailures(reportSchema.parse(report));
   for (const attachment of failures.flatMap((failure) => failure.attachments)) {
     if (attachment.path === undefined) continue;
-    const source = path.join(workspace, attachment.path);
-    const target = path.join(destination, attachment.path);
+    const source = await resolveInside(workspace, attachment.path);
+    const target = path.resolve(destination, attachment.path);
+    const relative = path.relative(path.resolve(destination), target);
+    if (
+      relative === ".." ||
+      relative.startsWith(`..${path.sep}`) ||
+      path.isAbsolute(relative)
+    ) {
+      throw new Error(
+        `Attachment ${attachment.path} is outside the case directory`,
+      );
+    }
     await mkdir(path.dirname(target), { recursive: true });
+    await resolveInside(destination, path.dirname(target));
+    if (await exists(target)) await resolveInside(destination, target);
     if (attachment.contentType.startsWith("image/")) {
       await cp(source, target);
       continue;
@@ -368,7 +423,10 @@ async function occupy(port: number): Promise<Server> {
   const server = createServer((_request, response) => {
     response.end("ok");
   });
-  await new Promise<void>((resolve) => server.listen(port, resolve));
+  await new Promise<void>((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(port, resolve);
+  });
   return server;
 }
 
@@ -385,7 +443,7 @@ async function run(
   await execFileAsync(command, args, {
     cwd,
     env: { ...process.env, ...env },
-    shell: process.platform === "win32",
+    shell: process.platform === "win32" && command === "pnpm",
     maxBuffer: 64 * 1024 * 1024,
   });
 }

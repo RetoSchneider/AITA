@@ -41,9 +41,20 @@ describe("ObservationLog", () => {
     expect(log.contains("O1", "   ")).toBe(false);
   });
 
-  it("renders an observation with its id and label", () => {
-    expect(render({ id: "O3", label: "list_changes", text: "none" })).toBe(
-      "[O3] list_changes\nnone",
+  it("does not verify the descriptive text accompanying an image", () => {
+    const log = new ObservationLog();
+    const image = log.record(
+      "Screenshot",
+      "Image image/png, shown below.",
+      "image",
     );
+
+    expect(log.contains(image.id, "Image image/png")).toBe(false);
+  });
+
+  it("renders an observation with its id and label", () => {
+    expect(
+      render({ id: "O3", label: "list_changes", text: "none", kind: "text" }),
+    ).toBe("[O3] list_changes\nnone");
   });
 });

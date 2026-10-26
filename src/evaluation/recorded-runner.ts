@@ -6,15 +6,29 @@ import type { Failure } from "../domain/failure.ts";
 import type { RerunOutcome, TestRunner } from "../playwright/runner.ts";
 import { exists } from "./cases.ts";
 
-export const recordingsSchema = z.array(
-  z.object({
-    project: z.string(),
-    runs: z.number(),
-    passed: z.number(),
-    failed: z.number(),
-    errors: z.array(z.string()),
-  }),
-);
+export const recordingsSchema = z
+  .array(
+    z
+      .object({
+        project: z.string(),
+        runs: z.number().int().nonnegative(),
+        passed: z.number().int().nonnegative(),
+        failed: z.number().int().nonnegative(),
+        errors: z.array(z.string()),
+      })
+      .refine(
+        (recording) => recording.runs === recording.passed + recording.failed,
+        {
+          message: "Recorded runs must equal passed plus failed runs",
+        },
+      ),
+  )
+  .refine(
+    (recordings) =>
+      new Set(recordings.map((recording) => recording.project)).size ===
+      recordings.length,
+    { message: "Each project must have exactly one rerun recording" },
+  );
 
 export class RecordedRunner implements TestRunner {
   readonly #recordings: RerunOutcome[];

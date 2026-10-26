@@ -52,6 +52,9 @@ const resultSchema = z.object({
 const testSchema = z.object({
   projectName: z.string(),
   status: z.enum(["expected", "unexpected", "flaky", "skipped"]),
+  expectedStatus: z
+    .enum(["passed", "failed", "timedOut", "interrupted", "skipped"])
+    .default("passed"),
   results: z.array(resultSchema),
 });
 
@@ -117,21 +120,55 @@ export function collectFailures(report: PlaywrightReport): Failure[] {
   return [...setup, ...tests.sort((a, b) => failedFirst(a) - failedFirst(b))];
 }
 
-export function countResults(report: PlaywrightReport): {
+export interface TestSelection {
+  file: string;
+  line: number;
+  title: string;
+  project: string;
+}
+
+export function countResults(
+  report: PlaywrightReport,
+  selection?: TestSelection,
+): {
   passed: number;
   failed: number;
   errors: string[];
 } {
   const paths = new ReportPaths(report.config);
-  const results = [...specsOf(report.suites)].flatMap(({ spec }) =>
-    spec.tests.flatMap((test) => test.results),
+  const results = [...specsOf(report.suites)]
+    .filter(
+      ({ spec, titles }) =>
+        selection === undefined ||
+        (paths.testFile(spec.file) === selection.file &&
+          spec.line === selection.line &&
+          titles.join(" › ") === selection.title),
+    )
+    .flatMap(({ spec }) =>
+      spec.tests
+        .filter(
+          (test) =>
+            selection === undefined || test.projectName === selection.project,
+        )
+        .flatMap((test) =>
+          test.results.map((result) => ({
+            result,
+            expectedStatus: test.expectedStatus,
+          })),
+        ),
+    );
+  const completed = results.filter(({ result }) => result.status !== "skipped");
+  const failed = completed.filter(({ result, expectedStatus }) =>
+    isFailedResult(result, expectedStatus),
   );
-  const failed = results.filter(isFailedResult);
-  const errors = failed.flatMap((result) =>
-    result.errors.map((error) => firstLine(toTestError(error, paths).message)),
-  );
+  const errors = [
+    ...report.errors,
+    ...failed.flatMap(({ result, expectedStatus }) =>
+      errorsOf(result, expectedStatus),
+    ),
+  ].map((error) => firstLine(toTestError(error, paths).message));
   return {
-    passed: results.filter((result) => result.status === "passed").length,
+    passed: completed.length - failed.length,
     failed: failed.length,
     errors: [...new Set(errors)],
   };
@@ -161,8 +198,12 @@ function testFailure(
   );
   const failedResults = failing.flatMap((test) =>
     test.results
-      .filter(isFailedResult)
-      .map((result) => ({ project: test.projectName, result })),
+      .filter((result) => isFailedResult(result, test.expectedStatus))
+      .map((result) => ({
+        project: test.projectName,
+        expectedStatus: test.expectedStatus,
+        result,
+      })),
   );
   const first = failedResults[0];
   if (first === undefined) return undefined;
@@ -182,7 +223,7 @@ function testFailure(
     failedIn: projectsWith("unexpected"),
     flakyIn: projectsWith("flaky"),
     passedIn: projectsWith("expected"),
-    error: combinedError(first.result.errors, paths),
+    error: combinedError(errorsOf(first.result, first.expectedStatus), paths),
     attempts: failing.flatMap((test) =>
       test.results.map((result) => toAttempt(test.projectName, result)),
     ),
@@ -269,8 +310,17 @@ function readableAttachments(
     }));
 }
 
-function isFailedResult(result: Result): boolean {
-  return result.status !== "passed" && result.status !== "skipped";
+function isFailedResult(result: Result, expectedStatus: string): boolean {
+  return result.status !== expectedStatus && result.status !== "skipped";
+}
+
+function errorsOf(result: Result, expectedStatus: string): ReportedError[] {
+  if (result.errors.length > 0) return result.errors;
+  return [
+    {
+      message: `Test ${result.status} unexpectedly; expected ${expectedStatus}.`,
+    },
+  ];
 }
 
 function textOf(chunks: z.output<typeof outputSchema>[]): string {

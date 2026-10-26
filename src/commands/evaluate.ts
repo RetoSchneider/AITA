@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
@@ -92,7 +93,8 @@ export async function evaluateCommand(args: string[]): Promise<void> {
   });
 
   const date = new Date().toISOString().slice(0, 10);
-  const name = `${date}-${options.model}-${options.effort}`;
+  const modelName = options.model.replace(/[^a-zA-Z0-9._-]/g, "-").slice(0, 80);
+  const name = `${date}-${modelName}-${options.effort}-${randomUUID()}`;
   const scorecard = renderScorecard(score(runs), runs, {
     model: options.model,
     effort: options.effort,
@@ -101,10 +103,13 @@ export async function evaluateCommand(args: string[]): Promise<void> {
     date,
   });
   await mkdir(options.output, { recursive: true });
-  await writeFile(path.join(options.output, `${name}.md`), `${scorecard}\n`);
+  await writeFile(path.join(options.output, `${name}.md`), `${scorecard}\n`, {
+    flag: "wx",
+  });
   await writeFile(
     path.join(options.output, `${name}.json`),
     `${JSON.stringify(runs, null, 2)}\n`,
+    { flag: "wx" },
   );
   process.stdout.write(`${scorecard}\n`);
 }

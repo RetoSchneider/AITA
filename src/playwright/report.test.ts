@@ -110,6 +110,47 @@ function report(root: string, separator = "/") {
 }
 
 describe("collectFailures", () => {
+  it("keeps unexpectedly passing tests marked as expected failures", () => {
+    const unexpectedPass = reportSchema.parse({
+      config: { rootDir: "/ci" },
+      suites: [
+        {
+          title: "checkout.spec.ts",
+          specs: [
+            {
+              title: "known defect",
+              file: "checkout.spec.ts",
+              line: 8,
+              column: 1,
+              tests: [
+                {
+                  projectName: "api",
+                  status: "unexpected",
+                  expectedStatus: "failed",
+                  results: [passed],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(collectFailures(unexpectedPass)).toMatchObject([
+      {
+        title: "known defect",
+        failedIn: ["api"],
+        error: { message: "Test passed unexpectedly; expected failed." },
+        attempts: [{ status: "passed" }],
+      },
+    ]);
+    expect(countResults(unexpectedPass)).toEqual({
+      passed: 0,
+      failed: 1,
+      errors: ["Test passed unexpectedly; expected failed."],
+    });
+  });
+
   it("merges the projects of one spec into a single failure", () => {
     const [failure, ...others] = collectFailures(report("/home/ci/seatwise"));
 
@@ -294,5 +335,85 @@ describe("countResults", () => {
       failed: 3,
       errors: ["Error: expect(locator).toBeVisible() failed"],
     });
+  });
+
+  it("counts only the selected test and project", () => {
+    expect(
+      countResults(report("/ci"), {
+        file: "tests/ui/booking.spec.ts",
+        line: 40,
+        title: "Booking › shows the book button",
+        project: "webkit",
+      }),
+    ).toEqual({
+      passed: 1,
+      failed: 1,
+      errors: ["Error: expect(locator).toBeVisible() failed"],
+    });
+  });
+
+  it("counts every repeat entry for the selected project", () => {
+    const repeated = report("/ci");
+    const spec = repeated.suites[0]?.suites?.[0]?.specs[0];
+    const firefox = spec?.tests.find((test) => test.projectName === "firefox");
+    if (spec === undefined || firefox === undefined) {
+      throw new Error("Missing test fixture");
+    }
+    spec.tests.push(structuredClone(firefox));
+
+    expect(
+      countResults(repeated, {
+        file: "tests/ui/booking.spec.ts",
+        line: 40,
+        title: "Booking › shows the book button",
+        project: "firefox",
+      }),
+    ).toEqual({ passed: 2, failed: 0, errors: [] });
+  });
+
+  it("preserves setup errors even when no test ran", () => {
+    expect(
+      countResults(
+        reportSchema.parse({
+          config: { rootDir: "/ci" },
+          errors: [
+            { message: "Error: database unavailable\nConnection refused" },
+          ],
+        }),
+      ),
+    ).toEqual({
+      passed: 0,
+      failed: 0,
+      errors: ["Error: database unavailable"],
+    });
+  });
+
+  it("counts an expected failure as a successful run", () => {
+    const expectedFailure = report("/ci");
+    const spec = expectedFailure.suites[0]?.suites?.[0]?.specs[0];
+    if (spec === undefined) throw new Error("Missing test fixture");
+    spec.tests = [
+      {
+        projectName: "api",
+        status: "expected",
+        expectedStatus: "failed",
+        results: [
+          {
+            ...failedResult(0, "/ci", "/"),
+            status: "failed",
+          },
+        ],
+      },
+    ];
+
+    expect(
+      countResults(expectedFailure, {
+        file: "tests/ui/booking.spec.ts",
+        line: 40,
+        title: "Booking › shows the book button",
+        project: "api",
+      }),
+    ).toEqual({ passed: 1, failed: 0, errors: [] });
+    expect(collectFailures(expectedFailure)).toEqual([]);
   });
 });

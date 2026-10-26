@@ -1,0 +1,11 @@
+{
+  "title": "Suspended organizer keeps dashboard access",
+  "expected": "product-defect",
+  "fault": "The organizer lookup no longer filters by an active profile, so suspended organizers keep access.",
+  "commit": "Look up organizer profiles by user id\n\nThe status filter kept the query from using the unique index on userId.",
+  "recording": {
+    "test": "tests/api/authorization.spec.ts:116",
+    "projects": ["api"],
+    "reruns": 3
+  }
+}

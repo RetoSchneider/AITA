@@ -1,0 +1,13 @@
+diff --git a/src/modules/promotions/promotion-service.ts b/src/modules/promotions/promotion-service.ts
+index 73dfe4d..fff0876 100644
+--- a/src/modules/promotions/promotion-service.ts
++++ b/src/modules/promotions/promotion-service.ts
+@@ -45,7 +45,7 @@ export async function validatePromotion(
+     client.order.count({
+       where: {
+         promotionCodeId: promotion.id,
+-        status: { notIn: ["PAYMENT_FAILED", "CANCELLED"] },
++        status: "PAID",
+       },
+     }),
+     client.order.count({

@@ -1,0 +1,131 @@
+diff --git a/docs/api.md b/docs/api.md
+index 0b9b575..8ebea2b 100644
+--- a/docs/api.md
++++ b/docs/api.md
+@@ -28,7 +28,7 @@ Errors use stable codes and a request identifier:
+ ```json
+ {
+   "error": {
+-    "code": "VALIDATION_ERROR",
++    "code": "INVALID_REQUEST",
+     "message": "The request contains invalid data",
+     "details": [
+       {
+diff --git a/src/app/api/v1/checkout/route.ts b/src/app/api/v1/checkout/route.ts
+index 2969fef..afcdbb5 100644
+--- a/src/app/api/v1/checkout/route.ts
++++ b/src/app/api/v1/checkout/route.ts
+@@ -20,7 +20,7 @@ export function POST(request: Request) {
+       idempotencyKey.length > 100
+     ) {
+       throw new ApplicationError(
+-        "VALIDATION_ERROR",
++        "INVALID_REQUEST",
+         "An Idempotency-Key header between 8 and 100 characters is required",
+         400,
+       );
+diff --git a/src/modules/events/organizer-service.ts b/src/modules/events/organizer-service.ts
+index 4b9deed..2f2e5e2 100644
+--- a/src/modules/events/organizer-service.ts
++++ b/src/modules/events/organizer-service.ts
+@@ -352,7 +352,7 @@ export async function createEvent(
+ ) {
+   const organizer = await organizerForUser(userId);
+   if (input.performance.startsAt <= clock.now()) {
+-    throw conflict("VALIDATION_ERROR", "Performance must be in the future");
++    throw conflict("INVALID_REQUEST", "Performance must be in the future");
+   }
+ 
+   return serializableTransaction(async (client) => {
+@@ -385,7 +385,7 @@ export async function createEvent(
+         (!ticketType.capacity || ticketType.capacity > section.capacity)
+       ) {
+         throw conflict(
+-          "VALIDATION_ERROR",
++          "INVALID_REQUEST",
+           `Capacity for ${ticketType.name} must be within the section capacity`,
+         );
+       }
+@@ -540,7 +540,7 @@ export async function updateEvent(
+       input.ticketTypes.length !== existingTicketTypes.size
+     ) {
+       throw conflict(
+-        "VALIDATION_ERROR",
++        "INVALID_REQUEST",
+         "Supply each existing ticket type exactly once",
+       );
+     }
+@@ -711,10 +711,10 @@ export async function createPromotion(
+ ) {
+   const organizer = await organizerForUser(userId);
+   if (input.endsAt <= input.startsAt) {
+-    throw conflict("VALIDATION_ERROR", "Promotion end must be after its start");
++    throw conflict("INVALID_REQUEST", "Promotion end must be after its start");
+   }
+   if (input.type === "PERCENTAGE" && input.value > 100) {
+-    throw conflict("VALIDATION_ERROR", "Percentage cannot exceed 100");
++    throw conflict("INVALID_REQUEST", "Percentage cannot exceed 100");
+   }
+   if (input.eventId) {
+     const event = await database.event.findFirst({
+diff --git a/src/modules/pricing/pricing.ts b/src/modules/pricing/pricing.ts
+index b7a202b..7de58d5 100644
+--- a/src/modules/pricing/pricing.ts
++++ b/src/modules/pricing/pricing.ts
+@@ -35,7 +35,7 @@ export function calculatePrice(
+ 
+   if (subtotalCents < 0 || !Number.isSafeInteger(subtotalCents)) {
+     throw new ApplicationError(
+-      "VALIDATION_ERROR",
++      "INVALID_REQUEST",
+       "The calculated subtotal is invalid",
+       422,
+     );
+diff --git a/src/modules/reservations/reservation-service.ts b/src/modules/reservations/reservation-service.ts
+index 77538f2..b6f6d5d 100644
+--- a/src/modules/reservations/reservation-service.ts
++++ b/src/modules/reservations/reservation-service.ts
+@@ -237,7 +237,7 @@ export async function createReservation(
+ 
+     if (new Set(reservationItems.map((item) => item.currency)).size !== 1) {
+       throw new ApplicationError(
+-        "VALIDATION_ERROR",
++        "INVALID_REQUEST",
+         "All tickets in a reservation must use the same currency",
+         422,
+       );
+diff --git a/src/shared/domain/errors.ts b/src/shared/domain/errors.ts
+index 956fe97..6ce06c8 100644
+--- a/src/shared/domain/errors.ts
++++ b/src/shared/domain/errors.ts
+@@ -2,7 +2,7 @@ export type ErrorCode =
+   | "AUTHENTICATION_REQUIRED"
+   | "FORBIDDEN"
+   | "NOT_FOUND"
+-  | "VALIDATION_ERROR"
++  | "INVALID_REQUEST"
+   | "CONFLICT"
+   | "RESERVATION_EXPIRED"
+   | "INVENTORY_UNAVAILABLE"
+diff --git a/src/shared/http/api-response.ts b/src/shared/http/api-response.ts
+index bc9f99c..d4255dc 100644
+--- a/src/shared/http/api-response.ts
++++ b/src/shared/http/api-response.ts
+@@ -105,7 +105,7 @@ function translateError(error: unknown, requestId: string) {
+ 
+   if (error instanceof ZodError) {
+     return {
+-      code: "VALIDATION_ERROR",
++      code: "INVALID_REQUEST",
+       message: "The request contains invalid data",
+       status: 422,
+       details: error.issues.map((issue) => ({
+@@ -152,7 +152,7 @@ export async function parseJson<T>(
+     value = await request.json();
+   } catch {
+     throw new ApplicationError(
+-      "VALIDATION_ERROR",
++      "INVALID_REQUEST",
+       "Request body must be valid JSON",
+       400,
+     );

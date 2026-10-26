@@ -1,0 +1,12 @@
+{
+  "title": "Random seats collide",
+  "expected": "flaky-test",
+  "fault": "The test picks two random seats out of two, so in about half of the runs both reservations ask for the same seat and the second one is rejected.",
+  "commit": "Pick random seats in the idempotency key test\n\nThe test should not depend on a particular seat.",
+  "recording": {
+    "test": "tests/api/checkout.spec.ts:83",
+    "projects": ["api"],
+    "reruns": 6,
+    "attempts": 8
+  }
+}

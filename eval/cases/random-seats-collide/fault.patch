@@ -1,0 +1,22 @@
+diff --git a/tests/api/checkout.spec.ts b/tests/api/checkout.spec.ts
+index 44b1c1d..b43a98a 100644
+--- a/tests/api/checkout.spec.ts
++++ b/tests/api/checkout.spec.ts
+@@ -1,4 +1,4 @@
+-import { randomUUID } from "node:crypto";
++import { randomInt, randomUUID } from "node:crypto";
+ 
+ import { test, expect } from "../support/fixtures";
+ import { database } from "../support/scenario";
+@@ -84,8 +84,9 @@ test("an idempotency key cannot be reused for a different reservation", async ({
+   customer,
+   scenario,
+ }) => {
+-  const first = await reserveSeat(customer, scenario);
+-  const second = await reserveSeat(customer, scenario, 1);
++  const seats = scenario.assigned.seatInventory.length;
++  const first = await reserveSeat(customer, scenario, randomInt(seats));
++  const second = await reserveSeat(customer, scenario, randomInt(seats));
+   const key = randomUUID();
+   expect((await checkout(customer, first, "pm_success", key)).status()).toBe(
+     201,

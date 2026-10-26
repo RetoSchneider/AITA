@@ -1,0 +1,11 @@
+{
+  "title": "Promotion limit exceeded by concurrent checkouts",
+  "expected": "product-defect",
+  "fault": "The redemption limit counts only paid orders, so two concurrent checkouts both see a free slot.",
+  "commit": "Tidy promotion redemption queries",
+  "recording": {
+    "test": "tests/api/checkout.spec.ts:117",
+    "projects": ["api"],
+    "reruns": 3
+  }
+}

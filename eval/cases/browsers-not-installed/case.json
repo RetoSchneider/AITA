@@ -1,0 +1,11 @@
+{
+  "title": "Browsers not installed",
+  "expected": "environment-issue",
+  "fault": "PLAYWRIGHT_BROWSERS_PATH pointed to a directory without browsers, as on a CI image that skipped the browser installation.",
+  "recording": {
+    "test": "tests/ui/discovery.spec.ts:3",
+    "projects": ["chromium"],
+    "env": { "PLAYWRIGHT_BROWSERS_PATH": "{workspace}/.missing-browsers" },
+    "reruns": 2
+  }
+}

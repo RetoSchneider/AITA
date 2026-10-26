@@ -1,0 +1,12 @@
+{
+  "title": "Promotion checked after a fixed wait",
+  "expected": "flaky-test",
+  "fault": "The test waits a fixed 30 ms after applying a promotion and then checks once, so it fails whenever the promotion request takes longer.",
+  "commit": "Speed up the booking test\n\nA short wait is enough for the promotion to apply, so the test no longer waits for the full assertion timeout.",
+  "recording": {
+    "test": "tests/ui/booking.spec.ts:5",
+    "projects": ["chromium"],
+    "reruns": 4,
+    "attempts": 6
+  }
+}

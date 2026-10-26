@@ -1,0 +1,150 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "/workspace/seatwise/node_modules/@playwright/test/cli.js",
+      "test",
+      "tests/api/catalog.spec.ts:4",
+      "--project",
+      "api",
+      "--reporter",
+      "json"
+    ],
+    "configFile": "/workspace/seatwise/playwright.config.ts",
+    "rootDir": "/workspace/seatwise/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {},
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/seatwise/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {},
+        "id": "api",
+        "name": "api",
+        "testDir": "/workspace/seatwise/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "api/**/*.spec.ts"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "/workspace/seatwise/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {},
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/workspace/seatwise/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "ui/**/*.spec.ts"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "/workspace/seatwise/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {},
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "/workspace/seatwise/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "ui/**/*.spec.ts"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "/workspace/seatwise/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {},
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "/workspace/seatwise/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "ui/**/*.spec.ts"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "/workspace/seatwise/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {},
+        "id": "accessibility",
+        "name": "accessibility",
+        "testDir": "/workspace/seatwise/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "a11y/**/*.spec.ts"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 2,
+    "webServer": {
+      "command": "node node_modules/next/dist/bin/next build && node node_modules/next/dist/bin/next start --port 3100",
+      "url": "http://localhost:3100/api/v1/health/ready",
+      "reuseExistingServer": false,
+      "timeout": 180000,
+      "env": {
+        "TZ": "UTC",
+        "SEATWISE_TEST": "1",
+        "DATABASE_URL": "postgresql://seatwise:seatwise@127.0.0.1:55432/seatwise_test?schema=public",
+        "BETTER_AUTH_URL": "http://localhost:3100",
+        "BETTER_AUTH_SECRET": "seatwise-isolated-test-secret-minimum-32-characters",
+        "TRUSTED_ORIGINS": "http://localhost:3100",
+        "SMTP_HOST": "127.0.0.1",
+        "SMTP_PORT": "11025",
+        "MAILPIT_URL": "http://127.0.0.1:18025",
+        "PAYMENT_SIMULATOR_DELAY_MS": "50",
+        "LOG_LEVEL": "warn",
+        "NODE_ENV": "production"
+      }
+    }
+  },
+  "suites": [],
+  "errors": [
+    {
+      "message": "Error: http://localhost:3100/api/v1/health/ready is already used, make sure that nothing is running on the port/url or set reuseExistingServer:true in config.webServer.",
+      "stack": "Error: http://localhost:3100/api/v1/health/ready is already used, make sure that nothing is running on the port/url or set reuseExistingServer:true in config.webServer."
+    }
+  ],
+  "stats": {
+    "startTime": "2026-10-26T14:57:53.954Z",
+    "duration": 14.616999999999962,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

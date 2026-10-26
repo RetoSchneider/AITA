@@ -1,0 +1,11 @@
+{
+  "title": "Validation error code renamed",
+  "expected": "outdated-test",
+  "fault": "The error code VALIDATION_ERROR was deliberately renamed to INVALID_REQUEST in the code and the API documentation; the test still expects the old code.",
+  "commit": "Rename the VALIDATION_ERROR code to INVALID_REQUEST\n\nAligns the error codes with the public API guidelines. docs/api.md shows the new code.",
+  "recording": {
+    "test": "tests/api/catalog.spec.ts:52",
+    "projects": ["api"],
+    "reruns": 3
+  }
+}

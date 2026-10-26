@@ -1,0 +1,11 @@
+{
+  "title": "Cancelled event can be published again",
+  "expected": "product-defect",
+  "fault": "The guard that rejects status changes after a cancellation was removed.",
+  "commit": "Remove the cancelled check from event status changes\n\nOnly the owning organizer can change an event's status, and the dashboard hides cancelled events.",
+  "recording": {
+    "test": "tests/api/organizer.spec.ts:4",
+    "projects": ["api"],
+    "reruns": 3
+  }
+}

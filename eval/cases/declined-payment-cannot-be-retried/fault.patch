@@ -1,0 +1,13 @@
+diff --git a/src/modules/reservations/cart-view.tsx b/src/modules/reservations/cart-view.tsx
+index 980b6bc..0d81d2c 100644
+--- a/src/modules/reservations/cart-view.tsx
++++ b/src/modules/reservations/cart-view.tsx
+@@ -153,8 +153,6 @@ export function CartView({ reservation: initialReservation }: CartViewProps) {
+             ? payload.error.message
+             : t("paymentFailed"),
+         );
+-        if ("error" in payload && payload.error?.details?.retryable)
+-          checkoutKey.current = null;
+         return;
+       }
+       router.push(`/account/orders/${payload.data.id}?paid=1`);

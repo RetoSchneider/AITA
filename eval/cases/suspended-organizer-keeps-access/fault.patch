@@ -1,0 +1,17 @@
+diff --git a/src/modules/events/organizer-service.ts b/src/modules/events/organizer-service.ts
+index 4b9deed..db56b7b 100644
+--- a/src/modules/events/organizer-service.ts
++++ b/src/modules/events/organizer-service.ts
+@@ -266,10 +266,10 @@ function slugify(value: string) {
+ 
+ async function organizerForUser(userId: string) {
+   const organizer = await database.organizerProfile.findFirst({
+-    where: { userId, status: "ACTIVE" },
++    where: { userId },
+   });
+   if (!organizer) {
+-    throw forbidden("An active organizer profile is required");
++    throw forbidden("An organizer profile is required");
+   }
+   return organizer;
+ }

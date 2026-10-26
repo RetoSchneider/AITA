@@ -1,0 +1,10 @@
+{
+  "title": "Test server port already in use",
+  "expected": "environment-issue",
+  "fault": "Another process was listening on port 3100, where the test run starts the application.",
+  "recording": {
+    "test": "tests/api/catalog.spec.ts:4",
+    "projects": ["api"],
+    "occupyPort": 3100
+  }
+}

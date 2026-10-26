@@ -1,0 +1,26 @@
+diff --git a/messages/de.json b/messages/de.json
+index d37272d..52d2929 100644
+--- a/messages/de.json
++++ b/messages/de.json
+@@ -149,7 +149,7 @@
+     "serviceFee": "Servicegebühr",
+     "total": "Gesamt",
+     "processing": "Wird verarbeitet…",
+-    "payAndGet": "Bezahlen und Tickets erhalten",
++    "payAndGet": "Jetzt bezahlen",
+     "revalidationNote": "Summen und Verfügbarkeit werden vor der Zahlung erneut auf dem Server geprüft."
+   },
+   "auth": {
+diff --git a/messages/en.json b/messages/en.json
+index 247d937..7b08698 100644
+--- a/messages/en.json
++++ b/messages/en.json
+@@ -149,7 +149,7 @@
+     "serviceFee": "Service fee",
+     "total": "Total",
+     "processing": "Processing…",
+-    "payAndGet": "Pay and get tickets",
++    "payAndGet": "Pay now",
+     "revalidationNote": "Totals and availability are checked again on the server before payment."
+   },
+   "auth": {

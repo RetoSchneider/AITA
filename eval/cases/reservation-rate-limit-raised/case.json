@@ -1,0 +1,11 @@
+{
+  "title": "Reservation rate limit raised",
+  "expected": "outdated-test",
+  "fault": "The reservation rate limit was deliberately raised from 12 to 30 requests per minute; the test still sends only 25 requests and expects a 429.",
+  "commit": "Raise the reservation rate limit to 30 per minute\n\nGroup bookers reserve many seats in a row and hit the old limit of 12. docs/api.md documents the new limit.",
+  "recording": {
+    "test": "tests/api/authorization.spec.ts:5",
+    "projects": ["api"],
+    "reruns": 3
+  }
+}

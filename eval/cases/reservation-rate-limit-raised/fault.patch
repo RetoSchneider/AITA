@@ -1,0 +1,26 @@
+diff --git a/docs/api.md b/docs/api.md
+index 0b9b575..9d55aed 100644
+--- a/docs/api.md
++++ b/docs/api.md
+@@ -81,7 +81,7 @@ auditability; payment simulator tokens are not stored.
+ - `404` — resource absent or outside the caller's ownership scope
+ - `409` — inventory, expiry, idempotency, or state conflict
+ - `422` — structurally valid request that violates validation or promotion rules
+-- `429` — endpoint rate limit exceeded
++- `429` — endpoint rate limit exceeded; customers can create 30 reservations per minute
+ - `500` — unexpected internal error
+ - `503` — transient payment provider failure
+ - `504` — payment provider timeout
+diff --git a/src/app/api/v1/reservations/route.ts b/src/app/api/v1/reservations/route.ts
+index 2516d27..0d3bced 100644
+--- a/src/app/api/v1/reservations/route.ts
++++ b/src/app/api/v1/reservations/route.ts
+@@ -12,7 +12,7 @@ export function POST(request: Request) {
+     await enforceRateLimit({
+       subject: user.id,
+       action: "create-reservation",
+-      limit: 12,
++      limit: 30,
+       windowSeconds: 60,
+     });
+     const input = await parseJson(request, createReservationSchema);

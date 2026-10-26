@@ -1,0 +1,13 @@
+[
+  {
+    "project": "api",
+    "runs": 6,
+    "passed": 3,
+    "failed": 3,
+    "errors": [
+      "Error: {\"error\":{\"code\":\"INVENTORY_UNAVAILABLE\",\"message\":\"Floor A-1 was just selected by someone else\",\"requestId\":\"4e712f82-baf4-4522-bc65-58d5eb854c5e\"}}",
+      "Error: {\"error\":{\"code\":\"INVENTORY_UNAVAILABLE\",\"message\":\"Floor A-2 was just selected by someone else\",\"requestId\":\"cb7cce2b-2761-4010-a1ce-ac469b2256cf\"}}",
+      "Error: {\"error\":{\"code\":\"INVENTORY_UNAVAILABLE\",\"message\":\"Floor A-1 was just selected by someone else\",\"requestId\":\"9bf5a997-fc8f-47ed-82d1-aae8be92f374\"}}"
+    ]
+  }
+]

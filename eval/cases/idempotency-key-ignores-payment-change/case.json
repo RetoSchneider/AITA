@@ -1,0 +1,11 @@
+{
+  "title": "Reused idempotency key with another payment method",
+  "expected": "product-defect",
+  "fault": "Checkout no longer compares the stored request hash, so reusing an idempotency key with another payment method replays the declined payment instead of returning a conflict.",
+  "commit": "Simplify the idempotency conflict check\n\nAn order belongs to exactly one reservation, so comparing the reservation id is enough.",
+  "recording": {
+    "test": "tests/api/checkout.spec.ts:7",
+    "projects": ["api"],
+    "reruns": 3
+  }
+}

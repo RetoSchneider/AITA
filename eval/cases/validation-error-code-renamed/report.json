@@ -1,0 +1,283 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "/workspace/seatwise/node_modules/@playwright/test/cli.js",
+      "test",
+      "tests/api/catalog.spec.ts:52",
+      "--project",
+      "api",
+      "--reporter",
+      "json"
+    ],
+    "configFile": "/workspace/seatwise/playwright.config.ts",
+    "rootDir": "/workspace/seatwise/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/seatwise/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "api",
+        "name": "api",
+        "testDir": "/workspace/seatwise/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "api/**/*.spec.ts"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "/workspace/seatwise/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/workspace/seatwise/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "ui/**/*.spec.ts"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "/workspace/seatwise/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "/workspace/seatwise/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "ui/**/*.spec.ts"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "/workspace/seatwise/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "/workspace/seatwise/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "ui/**/*.spec.ts"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "/workspace/seatwise/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "accessibility",
+        "name": "accessibility",
+        "testDir": "/workspace/seatwise/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "a11y/**/*.spec.ts"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 2,
+    "webServer": {
+      "command": "node node_modules/next/dist/bin/next build && node node_modules/next/dist/bin/next start --port 3100",
+      "url": "http://localhost:3100/api/v1/health/ready",
+      "reuseExistingServer": false,
+      "timeout": 180000,
+      "env": {
+        "TZ": "UTC",
+        "SEATWISE_TEST": "1",
+        "DATABASE_URL": "postgresql://seatwise:seatwise@127.0.0.1:55432/seatwise_test?schema=public",
+        "BETTER_AUTH_URL": "http://localhost:3100",
+        "BETTER_AUTH_SECRET": "seatwise-isolated-test-secret-minimum-32-characters",
+        "TRUSTED_ORIGINS": "http://localhost:3100",
+        "SMTP_HOST": "127.0.0.1",
+        "SMTP_PORT": "11025",
+        "MAILPIT_URL": "http://127.0.0.1:18025",
+        "PAYMENT_SIMULATOR_DELAY_MS": "50",
+        "LOG_LEVEL": "warn",
+        "NODE_ENV": "production"
+      }
+    }
+  },
+  "suites": [
+    {
+      "title": "api\\catalog.spec.ts",
+      "file": "api/catalog.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "malformed and invalid requests return structured errors",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "api",
+              "projectName": "api",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 386,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[32m-   \"code\": \"VALIDATION_ERROR\",\u001b[39m\n\u001b[31m+   \"code\": \"INVALID_REQUEST\",\u001b[39m\n\u001b[2m    \"requestId\": Any<String>,\u001b[22m\n\u001b[2m  }\u001b[22m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[32m-   \"code\": \"VALIDATION_ERROR\",\u001b[39m\n\u001b[31m+   \"code\": \"INVALID_REQUEST\",\u001b[39m\n\u001b[2m    \"requestId\": Any<String>,\u001b[22m\n\u001b[2m  }\u001b[22m\n    at /workspace/seatwise/tests/api/catalog.spec.ts:64:22",
+                    "location": {
+                      "file": "/workspace/seatwise/tests/api/catalog.spec.ts",
+                      "column": 22,
+                      "line": 64
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 62 |\u001b[39m   expect(invalid\u001b[33m.\u001b[39mstatus())\u001b[33m.\u001b[39mtoBe(\u001b[35m422\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 63 |\u001b[39m   \u001b[36mconst\u001b[39m body \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m invalid\u001b[33m.\u001b[39mjson()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 64 |\u001b[39m   expect(body\u001b[33m.\u001b[39merror)\u001b[33m.\u001b[39mtoMatchObject({\n \u001b[90m    |\u001b[39m                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 65 |\u001b[39m     code\u001b[33m:\u001b[39m \u001b[32m\"VALIDATION_ERROR\"\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 66 |\u001b[39m     requestId\u001b[33m:\u001b[39m expect\u001b[33m.\u001b[39many(\u001b[33mString\u001b[39m)\u001b[33m,\u001b[39m\n \u001b[90m 67 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/seatwise/tests/api/catalog.spec.ts",
+                        "column": 22,
+                        "line": 64
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[32m-   \"code\": \"VALIDATION_ERROR\",\u001b[39m\n\u001b[31m+   \"code\": \"INVALID_REQUEST\",\u001b[39m\n\u001b[2m    \"requestId\": Any<String>,\u001b[22m\n\u001b[2m  }\u001b[22m\n\n  62 |   expect(invalid.status()).toBe(422);\n  63 |   const body = await invalid.json();\n> 64 |   expect(body.error).toMatchObject({\n     |                      ^\n  65 |     code: \"VALIDATION_ERROR\",\n  66 |     requestId: expect.any(String),\n  67 |   });\n    at /workspace/seatwise/tests/api/catalog.spec.ts:64:22"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T14:58:35.802Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/seatwise/test-results/api-catalog-malformed-and--7f305-ts-return-structured-errors-api/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/workspace/seatwise/test-results/api-catalog-malformed-and--7f305-ts-return-structured-errors-api/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/seatwise/tests/api/catalog.spec.ts",
+                    "column": 22,
+                    "line": 64
+                  }
+                },
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 322,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[32m-   \"code\": \"VALIDATION_ERROR\",\u001b[39m\n\u001b[31m+   \"code\": \"INVALID_REQUEST\",\u001b[39m\n\u001b[2m    \"requestId\": Any<String>,\u001b[22m\n\u001b[2m  }\u001b[22m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[32m-   \"code\": \"VALIDATION_ERROR\",\u001b[39m\n\u001b[31m+   \"code\": \"INVALID_REQUEST\",\u001b[39m\n\u001b[2m    \"requestId\": Any<String>,\u001b[22m\n\u001b[2m  }\u001b[22m\n    at /workspace/seatwise/tests/api/catalog.spec.ts:64:22",
+                    "location": {
+                      "file": "/workspace/seatwise/tests/api/catalog.spec.ts",
+                      "column": 22,
+                      "line": 64
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 62 |\u001b[39m   expect(invalid\u001b[33m.\u001b[39mstatus())\u001b[33m.\u001b[39mtoBe(\u001b[35m422\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 63 |\u001b[39m   \u001b[36mconst\u001b[39m body \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m invalid\u001b[33m.\u001b[39mjson()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 64 |\u001b[39m   expect(body\u001b[33m.\u001b[39merror)\u001b[33m.\u001b[39mtoMatchObject({\n \u001b[90m    |\u001b[39m                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 65 |\u001b[39m     code\u001b[33m:\u001b[39m \u001b[32m\"VALIDATION_ERROR\"\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 66 |\u001b[39m     requestId\u001b[33m:\u001b[39m expect\u001b[33m.\u001b[39many(\u001b[33mString\u001b[39m)\u001b[33m,\u001b[39m\n \u001b[90m 67 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/seatwise/tests/api/catalog.spec.ts",
+                        "column": 22,
+                        "line": 64
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[32m-   \"code\": \"VALIDATION_ERROR\",\u001b[39m\n\u001b[31m+   \"code\": \"INVALID_REQUEST\",\u001b[39m\n\u001b[2m    \"requestId\": Any<String>,\u001b[22m\n\u001b[2m  }\u001b[22m\n\n  62 |   expect(invalid.status()).toBe(422);\n  63 |   const body = await invalid.json();\n> 64 |   expect(body.error).toMatchObject({\n     |                      ^\n  65 |     code: \"VALIDATION_ERROR\",\n  66 |     requestId: expect.any(String),\n  67 |   });\n    at /workspace/seatwise/tests/api/catalog.spec.ts:64:22"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 1,
+                  "startTime": "2026-10-26T14:58:36.747Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/seatwise/test-results/api-catalog-malformed-and--7f305-ts-return-structured-errors-api-retry1/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/workspace/seatwise/test-results/api-catalog-malformed-and--7f305-ts-return-structured-errors-api-retry1/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/seatwise/tests/api/catalog.spec.ts",
+                    "column": 22,
+                    "line": 64
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "aba51760a54b8829c7a1-9871b5b9141055ab480a",
+          "file": "api/catalog.spec.ts",
+          "line": 52,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-26T14:58:24.920Z",
+    "duration": 12420.233,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

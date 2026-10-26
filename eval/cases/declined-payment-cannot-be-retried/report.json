@@ -1,0 +1,303 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "/workspace/seatwise/node_modules/@playwright/test/cli.js",
+      "test",
+      "tests/ui/booking.spec.ts:45",
+      "--project",
+      "chromium",
+      "--reporter",
+      "json"
+    ],
+    "configFile": "/workspace/seatwise/playwright.config.ts",
+    "rootDir": "/workspace/seatwise/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/seatwise/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "api",
+        "name": "api",
+        "testDir": "/workspace/seatwise/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "api/**/*.spec.ts"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "/workspace/seatwise/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/workspace/seatwise/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "ui/**/*.spec.ts"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "/workspace/seatwise/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "/workspace/seatwise/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "ui/**/*.spec.ts"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "/workspace/seatwise/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "/workspace/seatwise/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "ui/**/*.spec.ts"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "/workspace/seatwise/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "accessibility",
+        "name": "accessibility",
+        "testDir": "/workspace/seatwise/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "a11y/**/*.spec.ts"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 2,
+    "webServer": {
+      "command": "node node_modules/next/dist/bin/next build && node node_modules/next/dist/bin/next start --port 3100",
+      "url": "http://localhost:3100/api/v1/health/ready",
+      "reuseExistingServer": false,
+      "timeout": 180000,
+      "env": {
+        "TZ": "UTC",
+        "SEATWISE_TEST": "1",
+        "DATABASE_URL": "postgresql://seatwise:seatwise@127.0.0.1:55432/seatwise_test?schema=public",
+        "BETTER_AUTH_URL": "http://localhost:3100",
+        "BETTER_AUTH_SECRET": "seatwise-isolated-test-secret-minimum-32-characters",
+        "TRUSTED_ORIGINS": "http://localhost:3100",
+        "SMTP_HOST": "127.0.0.1",
+        "SMTP_PORT": "11025",
+        "MAILPIT_URL": "http://127.0.0.1:18025",
+        "PAYMENT_SIMULATOR_DELAY_MS": "50",
+        "LOG_LEVEL": "warn",
+        "NODE_ENV": "production"
+      }
+    }
+  },
+  "suites": [
+    {
+      "title": "ui\\booking.spec.ts",
+      "file": "ui/booking.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "declined payments show an error and can be retried",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 11969,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Payment confirmed', { exact: true })\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Payment confirmed', { exact: true }) with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Payment confirmed', { exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Payment confirmed', { exact: true })\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Payment confirmed', { exact: true }) with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Payment confirmed', { exact: true })\u001b[22m\n\n    at /workspace/seatwise/tests/ui/booking.spec.ts:64:5",
+                    "location": {
+                      "file": "/workspace/seatwise/tests/ui/booking.spec.ts",
+                      "column": 5,
+                      "line": 64
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 62 |\u001b[39m   \u001b[36mawait\u001b[39m expect(\n \u001b[90m 63 |\u001b[39m     page\u001b[33m.\u001b[39mgetByText(\u001b[32m\"Payment confirmed\"\u001b[39m\u001b[33m,\u001b[39m { exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 64 |\u001b[39m   )\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 65 |\u001b[39m   expect(\n \u001b[90m 66 |\u001b[39m     \u001b[36mawait\u001b[39m database\u001b[33m.\u001b[39mticket\u001b[33m.\u001b[39mcount({ where\u001b[33m:\u001b[39m { userId\u001b[33m:\u001b[39m scenario\u001b[33m.\u001b[39mcustomer\u001b[33m.\u001b[39mid } })\u001b[33m,\u001b[39m\n \u001b[90m 67 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m1\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/seatwise/tests/ui/booking.spec.ts",
+                        "column": 5,
+                        "line": 64
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Payment confirmed', { exact: true })\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Payment confirmed', { exact: true }) with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Payment confirmed', { exact: true })\u001b[22m\n\n\n  62 |   await expect(\n  63 |     page.getByText(\"Payment confirmed\", { exact: true }),\n> 64 |   ).toBeVisible();\n     |     ^\n  65 |   expect(\n  66 |     await database.ticket.count({ where: { userId: scenario.customer.id } }),\n  67 |   ).toBe(1);\n    at /workspace/seatwise/tests/ui/booking.spec.ts:64:5"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T14:52:24.258Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/workspace/seatwise/test-results/ui-booking-declined-paymen-803be-an-error-and-can-be-retried-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/workspace/seatwise/test-results/ui-booking-declined-paymen-803be-an-error-and-can-be-retried-chromium/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/seatwise/test-results/ui-booking-declined-paymen-803be-an-error-and-can-be-retried-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/workspace/seatwise/test-results/ui-booking-declined-paymen-803be-an-error-and-can-be-retried-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/seatwise/tests/ui/booking.spec.ts",
+                    "column": 5,
+                    "line": 64
+                  }
+                },
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 11496,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Payment confirmed', { exact: true })\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Payment confirmed', { exact: true }) with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Payment confirmed', { exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Payment confirmed', { exact: true })\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Payment confirmed', { exact: true }) with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Payment confirmed', { exact: true })\u001b[22m\n\n    at /workspace/seatwise/tests/ui/booking.spec.ts:64:5",
+                    "location": {
+                      "file": "/workspace/seatwise/tests/ui/booking.spec.ts",
+                      "column": 5,
+                      "line": 64
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 62 |\u001b[39m   \u001b[36mawait\u001b[39m expect(\n \u001b[90m 63 |\u001b[39m     page\u001b[33m.\u001b[39mgetByText(\u001b[32m\"Payment confirmed\"\u001b[39m\u001b[33m,\u001b[39m { exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 64 |\u001b[39m   )\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 65 |\u001b[39m   expect(\n \u001b[90m 66 |\u001b[39m     \u001b[36mawait\u001b[39m database\u001b[33m.\u001b[39mticket\u001b[33m.\u001b[39mcount({ where\u001b[33m:\u001b[39m { userId\u001b[33m:\u001b[39m scenario\u001b[33m.\u001b[39mcustomer\u001b[33m.\u001b[39mid } })\u001b[33m,\u001b[39m\n \u001b[90m 67 |\u001b[39m   )\u001b[33m.\u001b[39mtoBe(\u001b[35m1\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/seatwise/tests/ui/booking.spec.ts",
+                        "column": 5,
+                        "line": 64
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Payment confirmed', { exact: true })\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Payment confirmed', { exact: true }) with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Payment confirmed', { exact: true })\u001b[22m\n\n\n  62 |   await expect(\n  63 |     page.getByText(\"Payment confirmed\", { exact: true }),\n> 64 |   ).toBeVisible();\n     |     ^\n  65 |   expect(\n  66 |     await database.ticket.count({ where: { userId: scenario.customer.id } }),\n  67 |   ).toBe(1);\n    at /workspace/seatwise/tests/ui/booking.spec.ts:64:5"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 1,
+                  "startTime": "2026-10-26T14:52:37.773Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/workspace/seatwise/test-results/ui-booking-declined-paymen-803be-an-error-and-can-be-retried-chromium-retry1/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/workspace/seatwise/test-results/ui-booking-declined-paymen-803be-an-error-and-can-be-retried-chromium-retry1/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/seatwise/test-results/ui-booking-declined-paymen-803be-an-error-and-can-be-retried-chromium-retry1/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/workspace/seatwise/test-results/ui-booking-declined-paymen-803be-an-error-and-can-be-retried-chromium-retry1/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/seatwise/tests/ui/booking.spec.ts",
+                    "column": 5,
+                    "line": 64
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "053dd6d670c9cdb3a1aa-37b9e4db93f1fb325b0c",
+          "file": "ui/booking.spec.ts",
+          "line": 45,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-26T14:52:13.910Z",
+    "duration": 35826.178,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,18 @@
+diff --git a/tests/ui/booking.spec.ts b/tests/ui/booking.spec.ts
+index db3b6be..53f7d5e 100644
+--- a/tests/ui/booking.spec.ts
++++ b/tests/ui/booking.spec.ts
+@@ -21,9 +21,10 @@ test("customer signs in, books a seat, and opens the issued QR ticket", async ({
+     .getByLabel("Promotion code", { exact: true })
+     .fill(scenario.promotion.code);
+   await page.getByRole("button", { name: "Apply", exact: true }).click();
+-  await expect(
+-    page.getByText(`Promotion (${scenario.promotion.code})`),
+-  ).toBeVisible();
++  await page.waitForTimeout(30);
++  expect(
++    await page.getByText(`Promotion (${scenario.promotion.code})`).isVisible(),
++  ).toBe(true);
+   await page.getByRole("button", { name: "Pay and get tickets" }).click();
+   await expect(
+     page.getByText("Payment confirmed", { exact: true }),

@@ -1,0 +1,11 @@
+{
+  "title": "Declined payment cannot be retried in the cart",
+  "expected": "product-defect",
+  "fault": "The cart keeps its idempotency key after a declined payment, so the retry with another payment method is rejected as a conflict.",
+  "commit": "Keep one checkout key per cart\n\nEvery payment attempt for a cart is now idempotent.",
+  "recording": {
+    "test": "tests/ui/booking.spec.ts:45",
+    "projects": ["chromium"],
+    "reruns": 2
+  }
+}

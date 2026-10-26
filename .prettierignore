@@ -1,0 +1,7 @@
+dist
+.cache
+pnpm-lock.yaml
+eval/cases/**/report.json
+eval/cases/**/*.patch
+eval/cases/**/test-results
+eval/results

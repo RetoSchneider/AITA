@@ -1,0 +1,10 @@
+{
+  "title": "Test database unavailable",
+  "expected": "environment-issue",
+  "fault": "The PostgreSQL container of the test environment was stopped before the run.",
+  "recording": {
+    "test": "tests/api/checkout.spec.ts:7",
+    "projects": ["api"],
+    "stop": ["postgres"]
+  }
+}

@@ -1,0 +1,16 @@
+diff --git a/src/modules/orders/checkout-service.ts b/src/modules/orders/checkout-service.ts
+index d868046..1f1f612 100644
+--- a/src/modules/orders/checkout-service.ts
++++ b/src/modules/orders/checkout-service.ts
+@@ -101,10 +101,7 @@ export async function checkout(
+     );
+   }
+ 
+-  if (
+-    order.reservationId !== input.reservationId ||
+-    (order.requestHash !== null && order.requestHash !== requestHash)
+-  ) {
++  if (order.reservationId !== input.reservationId) {
+     throw conflict(
+       "CONFLICT",
+       "This idempotency key belongs to a different checkout request",

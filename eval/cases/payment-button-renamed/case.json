@@ -1,0 +1,11 @@
+{
+  "title": "Payment button renamed",
+  "expected": "outdated-test",
+  "fault": "The payment button was deliberately renamed from 'Pay and get tickets' to 'Pay now'; the UI test still looks for the old label.",
+  "commit": "Shorten the payment button label\n\nThe long label wrapped on small screens. 'Pay now' fits on one line in every supported language.",
+  "recording": {
+    "test": "tests/ui/booking.spec.ts:45",
+    "projects": ["chromium"],
+    "reruns": 2
+  }
+}
